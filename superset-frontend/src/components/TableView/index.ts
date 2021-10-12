@@ -17,4 +17,5 @@
  * under the License.
  */
 export * from './TableView';
+export { default as TableChartTableView } from './TableChartTableView'
 export { default } from './TableView';

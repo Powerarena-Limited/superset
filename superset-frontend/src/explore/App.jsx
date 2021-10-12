@@ -24,7 +24,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { ThemeProvider } from '@superset-ui/core';
 import { DynamicPluginProvider } from 'src/components/DynamicPlugins';
 import ToastPresenter from '../messageToasts/containers/ToastPresenter';
-import ExploreViewContainer from './components/ExploreViewContainer';
+import ExploreViewContainer from './components/PaExploreViewContainer';
 import setupApp from '../setup/setupApp';
 import setupPlugins from '../setup/setupPlugins';
 import './main.less';
