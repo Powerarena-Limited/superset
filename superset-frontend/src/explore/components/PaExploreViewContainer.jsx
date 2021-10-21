@@ -57,8 +57,7 @@ import {
 } from '../../logger/LogUtils';
 import {
   tableFormDataObject,
-  FilterPDataType,
-  FilterMWorkstationName
+  flattenTableFormDataObject
 } from '../tableFormDataObject';
 import { ConsoleSqlOutlined } from '@ant-design/icons';
 
@@ -277,6 +276,9 @@ function ExploreViewContainer(props) {
       case chartName.includes('[Workstations_Chart]'):
         handleAdhocFiltersWorkstationAndDataType(data);
         break;
+      case chartName.includes('[Flatten_Workstations_Chart]'):
+        handleAdhocFiltersWorkstationAndDataType(data);
+        break;
       case chartName.includes('[Distribution_Chart]'):
         handleAdhocFiltersValue(data);
         break;
@@ -292,12 +294,18 @@ function ExploreViewContainer(props) {
         let month = monthParse[item[1]];
         let day = item[2].split(",")[0];
         let hour = "AM" === item[4] ? parseInt(item[3]) + 8 : parseInt(item[3]) + 12 + 8;
+        if (!hour) {
+          hour = 8;
+        }
+        if ("PM" == item[4] && 12 === parseInt(item[3])) {
+          hour = parseInt(item[3]) + 8;
+        }
         let start = new Date(year, month, day, hour).getTime();
         let end = start + 3600 * 1000;
         handleTimeRange(new Date(start).toISOString().split(".")[0] + ' : ' + new Date(end).toISOString().split(".")[0]);
         break;
       case chartName.includes('Workstation Hourly'):
-        // handleAdhocFilters(data.value);
+        handleAdhocFilters(data.value);
         break;
     }
   }
@@ -326,7 +334,7 @@ function ExploreViewContainer(props) {
         "isExtra": false,
         "isNew": false,
         "operator": data.ops[op],
-        "operatorId": ">=" === data.ops[op] ? "GREATER_THAN_OR_EQUAL" : "LESS_THAN",
+        "operatorId": ">=" === data.ops[op] ? "GREATER_THAN" : "LESS_THAN_OR_EQUAL",
         "sqlExpression": null,
         "subject": "P_VALUE"
       });
@@ -336,10 +344,10 @@ function ExploreViewContainer(props) {
   function handleAdhocFiltersWorkstationAndDataType(data) {
     for (let i = 0; i < data.type.length; i++) {
       clearTableFormDataPreviouslyAdhocFilters(data.type[i]);
-      if ("M_WORKSTATION_NAME" === data.type[i]) {
+      if ("M_WORKSTATION_NAME" === data.type[i] || "workstation_name" === data.type[i]) {
         tableFormData.adhoc_filters.push({
           "expressionType": "SIMPLE",
-          "subject": "M_WORKSTATION_NAME",
+          "subject": data.type[i],
           "operator": "IN",
           "operatorId": "IN",
           "comparator": data.value[i],
@@ -352,7 +360,7 @@ function ExploreViewContainer(props) {
       } else if ("P_DATA_TYPE" === data.type[i]) {
         tableFormData.adhoc_filters.push({
           "expressionType": "SIMPLE",
-          "subject": "P_DATA_TYPE",
+          "subject": data.type[i],
           "operator": "IN",
           "operatorId": "IN",
           "comparator": data.value[i],

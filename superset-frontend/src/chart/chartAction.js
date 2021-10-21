@@ -367,6 +367,7 @@ export function exploreJSON(
 ) {
   return async dispatch => {
     const logStart = Logger.getTimestamp();
+    console.log("@370", logStart)
     const controller = new AbortController();
 
     const requestParams = {
@@ -540,6 +541,22 @@ export function postChartFormData(
    * This will post the form data to the endpoint, returning a new chart.
    *
    */
+
+  /*
+   * [MODIFY-TIMEZONE]
+   */
+  console.log("@544", formData['time_range'].split(" : ")[0], formData['time_range'].split(" : ")[1])
+  console.log("@544", !isNaN(Date.parse(formData['time_range'].split(" : ")[0])))
+  if (!isNaN(Date.parse(formData['time_range'].split(" : ")[0]))) {
+    const since = Date.parse(formData['time_range'].split(" : ")[0]);
+    const until = Date.parse(formData['time_range'].split(" : ")[1]);
+    console.log("@544", since, until);
+    const utcSince = new Date(since).toISOString().split(".")[0];
+    const utcUntil = new Date(until).toISOString().split(".")[0];
+    console.log("@544", utcSince, utcUntil);
+    formData['time_range'] = utcSince + " : " + utcUntil;
+  }
+  console.log("@551 formData", formData, formData['time_range']);
   return exploreJSON(
     formData,
     force,

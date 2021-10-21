@@ -268,7 +268,7 @@ const ExploreChartPanel = props => {
                   props.updateTableForm({
                     'value': [targetItem[0], targetItem[2]],
                     'type': 'P_VALUE',
-                    'ops': ['>=', '<']
+                    'ops': ['>', '<=']
                   }, props.chartName);
                 }
               }
@@ -307,6 +307,16 @@ const ExploreChartPanel = props => {
                     onClick={() => props.updateTableForm({
                       'value': [[value.x]],
                       'type': ['M_WORKSTATION_NAME'],
+                      'ops': ['IN']
+                    }, props.chartName)} >
+                    {value.x}
+                  </Button>
+                case props.chartName.includes('[Flatten_Workstations_Chart]'):
+                  return <Button
+                    class="clickButton"
+                    onClick={() => props.updateTableForm({
+                      'value': [[value.x]],
+                      'type': ['workstation_name'],
                       'ops': ['IN']
                     }, props.chartName)} >
                     {value.x}

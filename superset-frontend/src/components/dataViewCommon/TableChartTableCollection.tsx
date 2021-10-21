@@ -293,6 +293,20 @@ export default React.memo(
                 })}
               >
                 {row.cells.map(cell => {
+                  // console.log("@296", cell);
+                  /*
+                   * [MODIFY-TIMEZONE]
+                   * have to change event ts to local timezone.
+                   */
+                  try {
+                    if (!isNaN(Date.parse(cell.value)) && ("P_EVENT_TS" === cell.column.Header || "event_ts" === cell.column.Header)) {
+                      cell.value = new Date(Date.parse(cell.value.split(".")[0]) + 16 * 3600 * 1000).toISOString();
+                      // console.log("@296-1", cell.value);
+                    }
+                  } catch {
+                    // console.log("@296-2 not a date");
+                  }
+                  // console.log("@296-3", cell);
                   if (cell.column.hidden) return null;
 
                   const columnCellProps = cell.column.cellProps || {};
@@ -311,7 +325,9 @@ export default React.memo(
                         className={cx({ 'loading-bar': loading })}
                         role={loading ? 'progressbar' : undefined}
                       >
-                        <span data-test="cell-text">{cell.render('Cell')}</span>
+                        <span data-test="cell-text">{
+                          cell.value
+                        }</span>
                       </span>
                     </td>
                   );
@@ -325,12 +341,32 @@ export default React.memo(
 );
 
 let showRowData = (row: object) => {
-  let clientName = "msi";
-  // let clientName = process.env.CLIENT_NAME;
+  /*
+   * normally it will get clientName from superset-[clientName].standalone...
+   * if the domain is not superset..., you can set [clientName]-- at chart name head.
+   * Example: demo--[Workstations_Chart] clientName = demo.
+   */
+  let clientName = "";
+  try {
+    clientName = window.location.href.split("superset-")[1].split(".standalone")[0] || "";
+  } catch {
+
+  }
+  if ("" === clientName) {
+    const chartName = $(".editable-title").children().attr('value');
+    clientName = chartName?.split("--")[0] || "";
+  }
   let entityCode = row['original']['P_DEVICE_ID'];
   let pos = row['original']['P_POS'];
   let endTime = Date.parse(row['original']['P_EVENT_TS']);
   let startTime = endTime - row['original']['P_VALUE'] * 1000;
+  if (undefined === entityCode) {
+    entityCode = row['original']['device_id'];
+    pos = row['original']['pos'];
+    endTime = row['original']['event_ts'];
+    startTime = endTime - row['original']['cycle_time'] * 1000
+    console.log("@338", endTime);
+  }
   let url = 'https://manage-' + clientName + '.standalone.powerarena.com:10443/admin/mark-for-reason/?tab=single-view&entity_code=' + entityCode + '&pos=' + pos + '&start_ts=' + startTime + '&end_ts=' + endTime;
   window.open(url, '_blank')?.focus();
 }
