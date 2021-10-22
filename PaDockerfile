@@ -40,7 +40,7 @@ RUN cd /app \
     && mkdir -p superset/static \
     && touch superset/static/version_info.json \
     && pip install --no-cache -r requirements/local.txt
-
+RUN pip install elasticsearch-dbapi
 
 ######################################################################
 # Node stage to deal with static asset construction
