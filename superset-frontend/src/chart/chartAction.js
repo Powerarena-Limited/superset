@@ -367,7 +367,6 @@ export function exploreJSON(
 ) {
   return async dispatch => {
     const logStart = Logger.getTimestamp();
-    console.log("@370", logStart)
     const controller = new AbortController();
 
     const requestParams = {
@@ -545,18 +544,27 @@ export function postChartFormData(
   /*
    * [MODIFY-TIMEZONE]
    */
-  console.log("@544", formData['time_range'].split(" : ")[0], formData['time_range'].split(" : ")[1])
-  console.log("@544", !isNaN(Date.parse(formData['time_range'].split(" : ")[0])))
   if (!isNaN(Date.parse(formData['time_range'].split(" : ")[0]))) {
     const since = Date.parse(formData['time_range'].split(" : ")[0]);
     const until = Date.parse(formData['time_range'].split(" : ")[1]);
-    console.log("@544", since, until);
     const utcSince = new Date(since).toISOString().split(".")[0];
     const utcUntil = new Date(until).toISOString().split(".")[0];
-    console.log("@544", utcSince, utcUntil);
     formData['time_range'] = utcSince + " : " + utcUntil;
   }
-  console.log("@551 formData", formData, formData['time_range']);
+  const mappings = {
+          "Last": {"index": 1, "day": 1, "week": 7, "month": 31, "quarter": 91, "year": 365},
+          "previous": {"index": 2, "week": 7, "month": 30, "year": 365}
+  } 
+  if ("Last" === formData.time_range.split(" ")[0] || "previous" === formData.time_range.split(" ")[0]) {
+    let type = formData.time_range.split(" ")[0];
+    const utcSince = new Date(
+      Date.parse(new Date(Date.now()).toDateString()) 
+      - mappings[type][formData.time_range.split(" ")[mappings[type]["index"]]] * 24 * 3600 * 1000
+      ).toISOString().split(".")[0];
+    const utcUntil = new Date(Date.parse(new Date(Date.now()).toDateString())).toISOString().split(".")[0];
+    formData['time_range'] = utcSince + " : " + utcUntil;
+  }
+
   return exploreJSON(
     formData,
     force,

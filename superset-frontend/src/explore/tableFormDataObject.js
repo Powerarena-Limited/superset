@@ -74,3 +74,58 @@ export const tableFormDataObject = {
     "color_pn": true,
     "extra_form_data": {}
 }
+
+export const flattenTableFormDataObject = {
+    "viz_type": "table",
+    "datasource": "",
+    "slice_id": 42,
+    "url_params": {},
+    "time_range_endpoints": [
+        "inclusive",
+        "exclusive"
+    ],
+    "granularity_sqla": "event_ts",
+    "time_grain_sqla": "PT1H",
+    "time_range": "DATEADD(DATETIME(\"2021-09-16T00:00:00\"), -24, hour) : 2021-09-16T00:00:00",
+    "query_mode": "raw",
+    "groupby": [
+        "workstation_name"
+    ],
+    "all_columns": [
+        "workstation_name",
+        "event_ts",
+        "cycle_time",
+        "process_time",
+        "idle_time",
+        "target_ct_time",
+        "production_line_code",
+        "pos",
+        "product_code",
+        "device_id",
+    ],
+    "percent_metrics": [],
+    "order_by_cols": [],
+    "row_limit": 10000,
+    "server_page_length": 10,
+    "order_desc": true,
+    "adhoc_filters": [
+        {
+            "expressionType": "SIMPLE",
+            "subject": "workstation_name",
+            "operator": "IN",
+            "operatorId": "IN",
+            "comparator": [
+                "A01"
+            ],
+            "clause": "WHERE",
+            "sqlExpression": null,
+            "isExtra": false,
+            "isNew": false,
+            "filterOptionName": "filter_pnegf7yxd1g_3523x62uhnf"
+        }
+    ],
+    "table_timestamp_format": "smart_date",
+    "show_cell_bars": true,
+    "color_pn": true,
+    "extra_form_data": {}
+}

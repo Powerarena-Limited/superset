@@ -365,7 +365,6 @@ let showRowData = (row: object) => {
     pos = row['original']['pos'];
     endTime = row['original']['event_ts'];
     startTime = endTime - row['original']['cycle_time'] * 1000
-    console.log("@338", endTime);
   }
   let url = 'https://manage-' + clientName + '.standalone.powerarena.com:10443/admin/mark-for-reason/?tab=single-view&entity_code=' + entityCode + '&pos=' + pos + '&start_ts=' + startTime + '&end_ts=' + endTime;
   window.open(url, '_blank')?.focus();

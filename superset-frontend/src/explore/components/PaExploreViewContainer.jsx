@@ -166,7 +166,6 @@ function useWindowSize({ delayMs = 250 } = {}) {
 function ExploreViewContainer(props) {
   // const chartName = $(".editable-title").text() ? $(".editable-title").text() : "";
   const chartName = $(".editable-title").children().attr('value');
-  console.log("@169", chartName)
   const dynamicPluginContext = usePluginContext();
   const dynamicPlugin = dynamicPluginContext.dynamicPlugins[props.vizType];
   const isDynamicPluginLoading = dynamicPlugin && dynamicPlugin.mounting;
@@ -283,7 +282,6 @@ function ExploreViewContainer(props) {
         handleAdhocFiltersValue(data);
         break;
       case chartName.includes('[Alerts_Overtime]'):
-        console.log("@286", data, data['value']);
         let monthParse = {
           'Jan': '00', 'Feb': '01', 'Mar': '02', 'Apr': '03', 'May': '04', 'Jun': '05',
           'Jul': '06', 'Aug': '07', 'Sep': '08', 'Oct': '09', 'Nov': '10', 'Dec': '11'
@@ -491,8 +489,7 @@ function ExploreViewContainer(props) {
       tableFormData.time_range = props.form_data.time_range;
     }
 
-    console.log("@485")
-    
+    console.log("@495", tableFormData, props.form_data);
     if (tableFormData.adhoc_filters) {
       for (let i = 0; i < props.form_data.adhoc_filters.length; i++) {
         if (props.form_data.adhoc_filters[i]['subject'] == "P_DATA_TYPE") {
@@ -508,6 +505,11 @@ function ExploreViewContainer(props) {
     // tableFormData.adhoc_filters = props.form_data.adhoc_filters;
     tableFormData.datasource = props.form_data.datasource;
     tableFormData.row_limit = props.form_data.row_limit;
+
+    const datasetName = $(".title-select").text();
+    if (datasetName.includes("flatten")) {
+      tableFormData.all_columns = flattenTableFormDataObject.all_columns
+    }
 
     // key should large than props.form_data.slice_id;
     props.actions.postChartFormData(tableFormData, false, 60, 10000000000, undefined, undefined)

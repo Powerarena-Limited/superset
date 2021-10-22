@@ -115,7 +115,6 @@ const Styles = styled.div`
 `;
 
 const ExploreChartPanel = props => {
-  console.log("@118 form_data", props.form_data)
   const theme = useTheme();
   const gutterMargin = theme.gridUnit * GUTTER_SIZE_FACTOR;
   const gutterHeight = theme.gridUnit * GUTTER_SIZE_FACTOR;
@@ -278,7 +277,6 @@ const ExploreChartPanel = props => {
             $(".panel-body").unbind("click").click(
               function (e) {
                 let target = $(".nvtooltip").children("div").children("table").children("thead").text();
-                console.log("@281", target);
                 props.updateTableForm({
                   'value': [target],
                   'type': ['P_EVENT_TS'],
