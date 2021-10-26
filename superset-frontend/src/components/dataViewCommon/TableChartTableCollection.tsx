@@ -361,12 +361,12 @@ let showRowData = (row: object) => {
   let entityCode = row['original']['P_DEVICE_ID'];
   let pos = row['original']['P_POS'];
   let endTime = Date.parse(row['original']['P_EVENT_TS']);
-  let startTime = endTime - row['original']['P_VALUE'] * 1000;
+  let startTime = endTime - parseInt(row['original']['P_VALUE']) * 1000;
   if (undefined === entityCode) {
     entityCode = row['original']['device_id'];
     pos = row['original']['pos'];
     endTime = row['original']['event_ts'];
-    startTime = endTime - row['original']['cycle_time'] * 1000
+    startTime = endTime - parseInt(row['original']['cycle_time']) * 1000
   }
   let url = 'https://manage-' + clientName + '.standalone.powerarena.com:10443/admin/mark-for-reason/?tab=single-view&entity_code=' + entityCode + '&pos=' + pos + '&start_ts=' + startTime + '&end_ts=' + endTime;
   window.open(url, '_blank')?.focus();
