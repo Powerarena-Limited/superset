@@ -299,9 +299,11 @@ export default React.memo(
                    * have to change event ts to local timezone.
                    */
                   try {
-                    if (!isNaN(Date.parse(cell.value)) && ("P_EVENT_TS" === cell.column.Header || "event_ts" === cell.column.Header)) {
+                    if (!isNaN(Date.parse(cell.value)) && "P_EVENT_TS" === cell.column.Header) {
                       cell.value = new Date(Date.parse(cell.value.split(".")[0]) + 16 * 3600 * 1000).toISOString();
                       // console.log("@296-1", cell.value);
+                    } else if ("event_ts" === cell.column.Header) {
+                      cell.value = new Date(cell.value + 8 * 3600 * 1000).toISOString();
                     }
                   } catch {
                     // console.log("@296-2 not a date");

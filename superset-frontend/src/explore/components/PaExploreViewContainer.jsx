@@ -489,6 +489,10 @@ function ExploreViewContainer(props) {
       tableFormData.time_range = props.form_data.time_range;
     }
 
+    if (undefined === tableFormData.adhoc_filters) {
+      tableFormData.adhoc_filters = Object.assign([], props.form_data.adhoc_filters);
+    }
+
     console.log("@495", tableFormData, props.form_data);
     if (tableFormData.adhoc_filters) {
       for (let i = 0; i < props.form_data.adhoc_filters.length; i++) {

@@ -38,37 +38,7 @@ export const tableFormDataObject = {
     "row_limit": 10000,
     "server_page_length": 10,
     "order_desc": true,
-    "adhoc_filters": [
-        {
-            "expressionType": "SIMPLE",
-            "subject": "P_DATA_TYPE",
-            "operator": "IN",
-            "operatorId": "IN",
-            "comparator": [
-                "Process Time",
-                "Cycle Time"
-            ],
-            "clause": "WHERE",
-            "sqlExpression": null,
-            "isExtra": false,
-            "isNew": false,
-            "filterOptionName": "filter_mawvcnf4jjf_e4v5sjk2bxj"
-        },
-        {
-            "expressionType": "SIMPLE",
-            "subject": "M_WORKSTATION_NAME",
-            "operator": "IN",
-            "operatorId": "IN",
-            "comparator": [
-                "A01"
-            ],
-            "clause": "WHERE",
-            "sqlExpression": null,
-            "isExtra": false,
-            "isNew": false,
-            "filterOptionName": "filter_pnegf7yxd1g_3523x62uhnf"
-        }
-    ],
+    "adhoc_filters": undefined,
     "table_timestamp_format": "smart_date",
     "show_cell_bars": true,
     "color_pn": true,
@@ -108,22 +78,7 @@ export const flattenTableFormDataObject = {
     "row_limit": 10000,
     "server_page_length": 10,
     "order_desc": true,
-    "adhoc_filters": [
-        {
-            "expressionType": "SIMPLE",
-            "subject": "workstation_name",
-            "operator": "IN",
-            "operatorId": "IN",
-            "comparator": [
-                "A01"
-            ],
-            "clause": "WHERE",
-            "sqlExpression": null,
-            "isExtra": false,
-            "isNew": false,
-            "filterOptionName": "filter_pnegf7yxd1g_3523x62uhnf"
-        }
-    ],
+    "adhoc_filters": undefined,
     "table_timestamp_format": "smart_date",
     "show_cell_bars": true,
     "color_pn": true,
