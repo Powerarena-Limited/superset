@@ -257,6 +257,7 @@ const ExploreChartPanel = props => {
   const buttons = useMemo(
     () => {
       try {
+        const titleSelect = $(".title-select").text();
         if (props.chart.queriesResponse) {
           if (props.chartName.includes('[Distribution_Chart]')) {
             $(".panel-body").unbind("click").click(
@@ -266,7 +267,7 @@ const ExploreChartPanel = props => {
                 if (3 === targetItem.length) {
                   props.updateTableForm({
                     'value': [targetItem[0], targetItem[2]],
-                    'type': 'P_VALUE',
+                    'type': titleSelect.includes("flatten") ? 'cycle_time' : 'P_VALUE',
                     'ops': ['>', '<=']
                   }, props.chartName);
                 }
@@ -304,17 +305,7 @@ const ExploreChartPanel = props => {
                     class="clickButton"
                     onClick={() => props.updateTableForm({
                       'value': [[value.x]],
-                      'type': ['M_WORKSTATION_NAME'],
-                      'ops': ['IN']
-                    }, props.chartName)} >
-                    {value.x}
-                  </Button>
-                case props.chartName.includes('[Flatten_Workstations_Chart]'):
-                  return <Button
-                    class="clickButton"
-                    onClick={() => props.updateTableForm({
-                      'value': [[value.x]],
-                      'type': ['workstation_name'],
+                      'type':  titleSelect.includes("flatten") ? ['workstation_name'] : ['M_WORKSTATION_NAME'],
                       'ops': ['IN']
                     }, props.chartName)} >
                     {value.x}
@@ -325,7 +316,7 @@ const ExploreChartPanel = props => {
             });
         }
       } catch {
-        return <p> no data </p>
+        return <p> ----- </p>
       }
     },
     [chartPanelRef, renderChart]

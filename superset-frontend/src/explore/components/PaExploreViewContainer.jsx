@@ -275,9 +275,6 @@ function ExploreViewContainer(props) {
       case chartName.includes('[Workstations_Chart]'):
         handleAdhocFiltersWorkstationAndDataType(data);
         break;
-      case chartName.includes('[Flatten_Workstations_Chart]'):
-        handleAdhocFiltersWorkstationAndDataType(data);
-        break;
       case chartName.includes('[Distribution_Chart]'):
         handleAdhocFiltersValue(data);
         break;
@@ -322,7 +319,7 @@ function ExploreViewContainer(props) {
   }
 
   function handleAdhocFiltersValue(data) {
-    clearTableFormDataPreviouslyAdhocFilters("P_VALUE");
+    clearTableFormDataPreviouslyAdhocFilters(data.type);
     for (let op in data['ops']) {
       tableFormData.adhoc_filters.push({
         "clause": "WHERE",
@@ -334,7 +331,7 @@ function ExploreViewContainer(props) {
         "operator": data.ops[op],
         "operatorId": ">=" === data.ops[op] ? "GREATER_THAN" : "LESS_THAN_OR_EQUAL",
         "sqlExpression": null,
-        "subject": "P_VALUE"
+        "subject": data.type
       });
     }
   }
@@ -486,14 +483,18 @@ function ExploreViewContainer(props) {
       tableFormData.time_range = tableFormData.update_time_range;
       tableFormData.time_grain_sqla = props.form_data.time_grain_sqla;
     } else {
-      tableFormData.time_range = props.form_data.time_range;
+      let time_range = $(".css-1e98568-Label").text();
+      tableFormData.time_range = time_range.split(" ≤ col < ")[0] + " : " + time_range.split(" ≤ col < ")[1];
+      if (undefined === time_range.split(" ≤ col < ")[1]) {
+        tableFormData.time_range = props.form_data.time_range;
+      }
     }
 
     if (undefined === tableFormData.adhoc_filters) {
       tableFormData.adhoc_filters = Object.assign([], props.form_data.adhoc_filters);
     }
 
-    console.log("@495", tableFormData, props.form_data);
+    console.log("@495", tableFormData.time_range, props.form_data.time_range, tableFormData, props.form_data);
     if (tableFormData.adhoc_filters) {
       for (let i = 0; i < props.form_data.adhoc_filters.length; i++) {
         if (props.form_data.adhoc_filters[i]['subject'] == "P_DATA_TYPE") {
