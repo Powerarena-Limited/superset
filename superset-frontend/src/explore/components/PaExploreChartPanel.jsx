@@ -259,7 +259,7 @@ const ExploreChartPanel = props => {
       try {
         const titleSelect = $(".title-select").text();
         if (props.chart.queriesResponse) {
-          if (props.chartName.includes('[Distribution_Chart]')) {
+          if (props.chartName.includes('[D]')) {
             $(".panel-body").unbind("click").click(
               function (e) {
                 let target = $(".vx-tooltip-portal").children("div").children("strong").text();
@@ -274,7 +274,7 @@ const ExploreChartPanel = props => {
               }
             );
           }
-          if (props.chartName.includes('[Alerts_Overtime]')) {
+          if (props.chartName.includes('[L]')) {
             $(".panel-body").unbind("click").click(
               function (e) {
                 let target = $(".nvtooltip").children("div").children("table").children("thead").text();
@@ -289,7 +289,7 @@ const ExploreChartPanel = props => {
           return Object.entries(props.chart.queriesResponse[0].data[0].values)
             .map(([key, value]) => {
               switch (true) {
-                case props.chartName.includes('[Performance_Overtime]'):
+                case props.chartName.includes('[TB]'):
                   const buttonText = new Date(value.x);
                   const hours = buttonText.getHours();
                   return <Button
@@ -300,7 +300,7 @@ const ExploreChartPanel = props => {
                     }, props.chartName)} >
                     {buttonText.toISOString().split(".")[0].split("T")[1]}
                   </Button>
-                case props.chartName.includes('[Workstations_Chart]'):
+                case props.chartName.includes('[B]'):
                   return <Button
                     class="clickButton"
                     onClick={() => props.updateTableForm({

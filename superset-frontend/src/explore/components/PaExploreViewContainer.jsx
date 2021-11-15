@@ -255,7 +255,7 @@ function ExploreViewContainer(props) {
 
   function handleTableFormData(data, chartName) {
     switch (true) {
-      case chartName.includes('[Performance_Overtime]'):
+      case chartName.includes('[TB]'):
         let period = 3600 * 1000;
         if (props.form_data.time_grain_sqla == "PT1M") {
           period = 60 * 1000;
@@ -272,13 +272,13 @@ function ExploreViewContainer(props) {
         let endTime = new Date(data.value.x + period).toISOString().split(".")[0];
         handleTimeRange(startTime + ' : ' + endTime);
         break;
-      case chartName.includes('[Workstations_Chart]'):
+      case chartName.includes('[B]'):
         handleAdhocFiltersWorkstationAndDataType(data);
         break;
-      case chartName.includes('[Distribution_Chart]'):
+      case chartName.includes('[D]'):
         handleAdhocFiltersValue(data);
         break;
-      case chartName.includes('[Alerts_Overtime]'):
+      case chartName.includes('[L]'):
         let monthParse = {
           'Jan': '00', 'Feb': '01', 'Mar': '02', 'Apr': '03', 'May': '04', 'Jun': '05',
           'Jul': '06', 'Aug': '07', 'Sep': '08', 'Oct': '09', 'Nov': '10', 'Dec': '11'
