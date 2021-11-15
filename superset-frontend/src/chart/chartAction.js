@@ -555,11 +555,15 @@ export function postChartFormData(
       if (time.includes("now") && !time.includes("DATEADD")) {
         utcTime = new Date(Date.now()).toISOString().split(".")[0];
       } else if (time.includes("DATEADD")) { 
-        let relatedUnitMapping = {"second": 1, "minute": 60, "hour": 60 * 60, "day": 60 * 60 * 24}
+        let relatedUnitMapping = {"second": 1, "minute": 60, "hour": 60 * 60, "day": 60 * 60 * 24, "week": 60 * 60 * 24 * 7}
         let related = time.split('DATEADD(DATETIME("')[1].split('")')[0];
         let offset = time.split(", ")[1];
         let unit = time.split(", ")[2].split(")")[0];
-        console.log("@561", related, offset, unit);
+        if ("now" === related) {
+          related = new Date(Date.now() + 60 * 60 * 8 * 1000).toISOString().split(".")[0];
+        }
+        let timestamp = Date.parse(related) + offset * relatedUnitMapping[unit] * 1000;
+        utcTime = new Date(timestamp).toISOString().split(".")[0];
       } else {
         utcTime = new Date(time).toISOString().split(".")[0];
       }
