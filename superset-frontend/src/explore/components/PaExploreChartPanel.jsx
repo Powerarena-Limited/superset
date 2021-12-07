@@ -30,6 +30,7 @@ import {
 import ConnectedExploreChartHeader from './ExploreChartHeader';
 import { DataTablesRawDataPane } from './DataTablesRawDataPane';
 import { buildV1ChartDataPayload } from '../exploreUtils';
+import Button from 'src/components/Button';
 
 const propTypes = {
   actions: PropTypes.object.isRequired,
