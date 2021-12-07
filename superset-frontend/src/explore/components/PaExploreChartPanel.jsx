@@ -28,10 +28,8 @@ import {
   setInLocalStorage,
 } from 'src/utils/localStorageHelpers';
 import ConnectedExploreChartHeader from './ExploreChartHeader';
-import { DataTablesPane } from './DataTablesPane';
 import { DataTablesRawDataPane } from './DataTablesRawDataPane';
 import { buildV1ChartDataPayload } from '../exploreUtils';
-import Button from 'src/components/Button';
 
 const propTypes = {
   actions: PropTypes.object.isRequired,

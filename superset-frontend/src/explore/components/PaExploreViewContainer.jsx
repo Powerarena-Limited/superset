@@ -483,7 +483,7 @@ function ExploreViewContainer(props) {
       tableFormData.time_range = tableFormData.update_time_range;
       tableFormData.time_grain_sqla = props.form_data.time_grain_sqla;
     } else {
-      let time_range = $('*[data-test="time-range-trigger"]').text();
+      let time_range = $('*[data-test="time-range-trigger"]').last().text();
       tableFormData.time_range = time_range.split(" ≤ col < ")[0] + " : " + time_range.split(" ≤ col < ")[1];
       if (undefined === time_range.split(" ≤ col < ")[1]) {
         tableFormData.time_range = props.form_data.time_range;

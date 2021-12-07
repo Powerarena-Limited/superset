@@ -544,7 +544,7 @@ export function postChartFormData(
   /*
    * [MODIFY-TIMEZONE]
    */
-  console.log("@550", formData['time_range']);
+  console.log("@550", formData['time_range'], formData);
   if (formData['time_range'].includes("DATEADD") || formData['time_range'].includes("now")) {
     let since = formData['time_range'].split(" : ")[0];
     let until = formData['time_range'].split(" : ")[1];
