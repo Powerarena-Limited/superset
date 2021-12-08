@@ -275,7 +275,7 @@ function ExploreViewContainer(props) {
       case chartName.includes('[B]'):
         handleAdhocFiltersWorkstationAndDataType(data);
         break;
-      case chartName.includes('[D]'):
+      case chartName.includes('[H]'):
         handleAdhocFiltersValue(data);
         break;
       case chartName.includes('[L]'):

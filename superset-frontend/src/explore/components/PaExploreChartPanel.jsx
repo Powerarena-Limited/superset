@@ -258,7 +258,7 @@ const ExploreChartPanel = props => {
       try {
         const titleSelect = $(".title-select").text();
         if (props.chart.queriesResponse) {
-          if (props.chartName.includes('[D]')) {
+          if (props.chartName.includes('[H]')) {
             $(".panel-body").unbind("click").click(
               function (e) {
                 let target = $(".vx-tooltip-portal").children("div").children("strong").text();
