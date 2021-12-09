@@ -300,10 +300,13 @@ export default React.memo(
                    */
                   try {
                     if (!isNaN(Date.parse(cell.value)) && "P_EVENT_TS" === cell.column.Header) {
-                      cell.value = new Date(Date.parse(cell.value.split(".")[0]) + 16 * 3600 * 1000).toISOString();
+                      // cell.value = new Date(Date.parse(cell.value.split(".")[0]) + 16 * 3600 * 1000).toISOString();
                       // console.log("@296-1", cell.value);
                     } else if ("event_ts" === cell.column.Header) {
-                      cell.value = new Date(cell.value + 8 * 3600 * 1000).toISOString();
+                      // cell.value = new Date(cell.value + 8 * 3600 * 1000).toISOString();
+                      cell.value = new Date(cell.value).toISOString();
+                    } else if ("event_ts_timezone" === cell.column.Header) {
+                      cell.value = new Date(cell.value).toISOString();
                     }
                   } catch {
                     // console.log("@296-2 not a date");
@@ -349,14 +352,17 @@ let showRowData = (row: object) => {
    * Example: demo--[Workstations_Chart] clientName = demo.
    */
   let clientName = "";
+  let port = "10443"
   try {
     clientName = window.location.href.split("superset-")[1].split(".standalone")[0] || "";
+    port = "10443"
   } catch {
 
   }
   if ("" === clientName) {
     const chartName = $(".editable-title").children().attr('value');
     clientName = chartName?.split("--")[0] || "";
+    port = chartName?.split("--")[1] || "10443";
   }
   let entityCode = row['original']['P_DEVICE_ID'];
   let pos = row['original']['P_POS'];
@@ -368,6 +374,7 @@ let showRowData = (row: object) => {
     endTime = row['original']['event_ts'];
     startTime = endTime - parseInt(row['original']['cycle_time']) * 1000
   }
-  let url = 'https://manage-' + clientName + '.standalone.powerarena.com:10443/admin/mark-for-reason/?tab=single-view&entity_code=' + entityCode + '&pos=' + pos + '&start_ts=' + startTime + '&end_ts=' + endTime;
+  let url = 'https://manage-' + clientName + '.standalone.powerarena.com:' + port + '/admin/mark-for-reason/?tab=single-view&entity_code=' + entityCode + '&pos=' + pos + '&start_ts=' + startTime + '&end_ts=' + endTime;
+  console.log("@378", url);
   window.open(url, '_blank')?.focus();
 }

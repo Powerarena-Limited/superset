@@ -64,6 +64,7 @@ export const flattenTableFormDataObject = {
     "all_columns": [
         "workstation_name",
         "event_ts",
+        "event_ts_timezone",
         "cycle_time",
         "process_time",
         "idle_time",
