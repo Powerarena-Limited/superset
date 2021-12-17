@@ -254,20 +254,21 @@ function ExploreViewContainer(props) {
   }
 
   function handleTableFormData(data, chartName) {
+    let timezoneOffset = new Date().getTimezoneOffset() * 60000;
+    let period = 3600 * 1000;
+    if (props.form_data.time_grain_sqla == "PT1M") {
+      period = 60 * 1000;
+    } else if (props.form_data.time_grain_sqla == "P1H") {
+      period = 3600 * 1000;
+    } else if (props.form_data.time_grain_sqla === "P1D") {
+      period = 86400 * 1000;
+    } else if (props.form_data.time_grain_sqla === "P1M") {
+      period = 30 * 86400 * 1000;
+    } else if (props.form_data.time_grain_sqla === "P1Y") {
+      period = 365 * 86400 * 1000;
+    }
     switch (true) {
       case chartName.includes('[TB]'):
-        let period = 3600 * 1000;
-        if (props.form_data.time_grain_sqla == "PT1M") {
-          period = 60 * 1000;
-        } else if (props.form_data.time_grain_sqla == "P1H") {
-          period = 3600 * 1000;
-        } else if (props.form_data.time_grain_sqla === "P1D") {
-          period = 86400 * 1000;
-        } else if (props.form_data.time_grain_sqla === "P1M") {
-          period = 30 * 86400 * 1000;
-        } else if (props.form_data.time_grain_sqla === "P1Y") {
-          period = 365 * 86400 * 1000;
-        }
         let startTime = new Date(data.value.x).toISOString().split(".")[0];
         let endTime = new Date(data.value.x + period).toISOString().split(".")[0];
         handleTimeRange(startTime + ' : ' + endTime);
@@ -297,11 +298,19 @@ function ExploreViewContainer(props) {
         }
         let start = new Date(year, month, day, hour).getTime();
         let end = start + 3600 * 1000;
+        console.log("@300", new Date(start).toISOString().split(".")[0] + ' : ' + new Date(end).toISOString().split(".")[0]);
         handleTimeRange(new Date(start).toISOString().split(".")[0] + ' : ' + new Date(end).toISOString().split(".")[0]);
         break;
-      case chartName.includes('Workstation Hourly'):
-        handleAdhocFilters(data.value);
-        break;
+      case chartName.includes('[TL]'):
+        console.log("@304", data);
+        let time = Date.parse(data.value[0].split(" ")[0] + "T" + data.value[0].split(" ")[1] + ":00");
+        handleTimeRange(
+          new Date(time - timezoneOffset).toISOString().split(".")[0] 
+          + " : " + 
+          new Date(time - timezoneOffset + period).toISOString().split(".")[0]
+        );
+        // handleTimeRange();
+        break
     }
   }
 

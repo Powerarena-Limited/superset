@@ -273,19 +273,32 @@ const ExploreChartPanel = props => {
               }
             );
           }
-          if (props.chartName.includes('[L]')) {
+          else if (props.chartName.includes('[TL]')) {
+            $(".panel-body").unbind("click").click(
+              function (e) {
+                let target = $(".echarts_timeseries_line").text().split("count")[0];
+                console.log("@279 clicked!", target);
+                props.updateTableForm({
+                  'value': [target],
+                  'type': [titleSelect.includes("flatten") ? 'event_tz_timezone' : 'P_EVENT_TS'],
+                  'ops': ['time'],
+                }, props.chartName)
+              }
+            )
+          }
+          else if (props.chartName.includes('[L]')) {
             $(".panel-body").unbind("click").click(
               function (e) {
                 let target = $(".nvtooltip").children("div").children("table").children("thead").text();
                 props.updateTableForm({
                   'value': [target],
-                  'type': ['P_EVENT_TS'],
+                  'type': [titleSelect.includes("flatten") ? 'event_tz_timezone' : 'P_EVENT_TS'],
                   'ops': ['time'],
                 }, props.chartName)
               }
             );
-          }
-          return Object.entries(props.chart.queriesResponse[0].data[0].values)
+          } else {
+            return Object.entries(props.chart.queriesResponse[0].data[0].values)
             .map(([key, value]) => {
               switch (true) {
                 case props.chartName.includes('[TB]'):
@@ -313,9 +326,10 @@ const ExploreChartPanel = props => {
                   return <p></p>
               }
             });
+          }
         }
       } catch {
-        return <p> ----- </p>
+        console.log("@326 template chart name is not match!");
       }
     },
     [chartPanelRef, renderChart]
