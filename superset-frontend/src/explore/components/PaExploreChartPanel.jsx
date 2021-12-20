@@ -276,7 +276,7 @@ const ExploreChartPanel = props => {
           else if (props.chartName.includes('[TL]')) {
             $(".panel-body").unbind("click").click(
               function (e) {
-                let target = $(".echarts_timeseries_line").text().split("count")[0];
+                let target = $($(".echarts_timeseries_line").children("div").children("div")[1]).html().toString().split('<br>')[0];
                 console.log("@279 clicked!", target);
                 props.updateTableForm({
                   'value': [target],
