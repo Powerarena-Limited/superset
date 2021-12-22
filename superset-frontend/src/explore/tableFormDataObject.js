@@ -74,7 +74,8 @@ export const flattenTableFormDataObject = {
         "product_description",
         "production_line_code",
         "pos",
-        "event_ts"
+        "event_ts",
+        "device_id"
     ],
     "percent_metrics": [],
     "order_by_cols": [],
