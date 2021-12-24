@@ -5,6 +5,12 @@ from cachelib.file import FileSystemCache
 from celery.schedules import crontab
 logger = logging.getLogger()
 
+# Flask-WTF flag for CSRF
+WTF_CSRF_ENABLED = True
+# Add endpoints that need to be exempt from CSRF protection
+WTF_CSRF_EXEMPT_LIST = []
+# A CSRF token that expires in 1 year
+WTF_CSRF_TIME_LIMIT = 60 * 60 * 24 * 365
 
 def get_env_variable(var_name, default=None):
     """Get the environment variable or raise exception."""
@@ -24,8 +30,9 @@ FEATURE_FLAGS = {
     "ALERT_REPORTS": True
 }
 
-REDIS_HOST = get_env_variable("REDIS_HOST", "redis-superset")
+REDIS_HOST = get_env_variable("REDIS_HOST", "superset-redis")
 REDIS_PORT = get_env_variable("REDIS_PORT", "6379")
+SQLALCHEMY_DATABASE_URI = get_env_variable("SQLALCHEMY_DATABASE_URI", "postgresql+psycopg2://superset:superset@db/superset")
 
 class CeleryConfig:
     BROKER_URL = 'redis://%s:%s/0' % (REDIS_HOST, REDIS_PORT)
@@ -83,6 +90,12 @@ WEBDRIVER_OPTION_ARGS = [
     "--disable-extensions",
 ]
 
+EMAIL_NOTIFICATIONS = True
+EMAIL_REPORTS_USER = get_env_variable("EMAIL_REPORTS_USER" ,"admin")
+EMAIL_REPORTS_PASSWORD = get_env_variable("EMAIL_REPORTS_PASSWORD", "admin")
+WEBDRIVER_BASEURL = get_env_variable("WEBDRIVER_BASEURL", "http://superset:8088/")
+WEBDRIVER_BASEURL_USER_FRIENDLY = WEBDRIVER_BASEURL
+# ENABLE_SCHEDULED_EMAIL_REPORTS = get_env_variable("ENABLE_SCHEDULED_EMAIL_REPORTS", True)
 
-ENABLE_SCHEDULED_EMAIL_REPORTS = get_env_variable("ENABLE_SCHEDULED_EMAIL_REPORTS", True)
+
 ENABLE_PROXY_FIX = True
