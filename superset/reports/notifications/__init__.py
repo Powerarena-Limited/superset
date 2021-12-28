@@ -29,6 +29,7 @@ def create_notification(
     Returns the Notification class for the recipient type
     """
     for plugin in BaseNotification.plugins:
+        print("@32", plugin)
         if plugin.type == recipient.type:
             return plugin(recipient, notification_content)
     raise Exception("Recipient type not supported")

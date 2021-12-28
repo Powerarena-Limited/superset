@@ -116,8 +116,11 @@ class EmailNotification(BaseNotification):  # pylint: disable=too-few-public-met
 
     def send(self) -> None:
         subject = self._get_subject()
+        print("@119", "subject")
         content = self._get_content()
+        print("@121", "content")
         to = self._get_to()
+        print("@123", to)
         try:
             send_email_smtp(
                 to,
@@ -133,4 +136,5 @@ class EmailNotification(BaseNotification):  # pylint: disable=too-few-public-met
             )
             logger.info("Report sent to email")
         except Exception as ex:
+            print("@139", ex)
             raise NotificationError(ex)

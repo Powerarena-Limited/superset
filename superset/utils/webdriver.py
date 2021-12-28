@@ -141,6 +141,7 @@ class WebDriverProxy:
             sleep(selenium_animation_wait)
             logger.info("Taking a PNG screenshot or url %s", url)
             img = element.screenshot_as_png
+            print("@144, img")
         except TimeoutException:
             logger.warning("Selenium timed out requesting url %s", url, exc_info=True)
         except StaleElementReferenceException:
