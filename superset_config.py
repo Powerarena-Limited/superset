@@ -32,7 +32,7 @@ FEATURE_FLAGS = {
 
 REDIS_HOST = get_env_variable("REDIS_HOST", "superset-redis")
 REDIS_PORT = get_env_variable("REDIS_PORT", "6379")
-SQLALCHEMY_DATABASE_URI = get_env_variable("SQLALCHEMY_DATABASE_URI", "postgresql+psycopg2://superset:superset@db/superset")
+SQLALCHEMY_DATABASE_URI = get_env_variable("SQLALCHEMY_DATABASE_URI", "postgresql+psycopg2://superset:superset@superset-db/superset")
 
 class CeleryConfig:
     BROKER_URL = 'redis://%s:%s/0' % (REDIS_HOST, REDIS_PORT)
@@ -70,13 +70,13 @@ SCREENSHOT_LOAD_WAIT = get_env_variable("SCREENSHOT_LOAD_WAIT", 600)
 SLACK_API_TOKEN = get_env_variable("SLACK_API_TOKEN", "slack-api-token")
 
 # Email configuration
-SMTP_HOST = get_env_variable("SMTP_HOST", "localhost")
-SMTP_STARTTLS = get_env_variable("SMTP_STARTTLS", True)
-SMTP_SSL = get_env_variable("SMTP_SSL", False)
-SMTP_USER = get_env_variable("SMTP_USER", "powerarena")
-SMTP_PORT = get_env_variable("SMTP_PORT", 587)
-SMTP_PASSWORD = get_env_variable("SMTP_PASSWORD", "password")
-SMTP_MAIL_FROM = get_env_variable("SMTP_MAIL_FROM", "support@powerarena.com")
+SMTP_HOST = get_env_variable("SMTP_HOST", "smtpdm-ap-southeast-1.aliyun.com")
+SMTP_STARTTLS = get_env_variable("SMTP_STARTTLS", False)
+SMTP_SSL = get_env_variable("SMTP_SSL", True)
+SMTP_USER = get_env_variable("SMTP_USER", "noreply@mailer.powerarena.com")
+SMTP_PORT = get_env_variable("SMTP_PORT", 465)
+SMTP_PASSWORD = get_env_variable("SMTP_PASSWORD", "AliPay3427")
+SMTP_MAIL_FROM = get_env_variable("SMTP_MAIL_FROM", "PowerArena Team <noreply@mailer.powerarena.com>")
 
 WEBDRIVER_TYPE = "chrome"
 WEBDRIVER_OPTION_ARGS = [
@@ -89,12 +89,12 @@ WEBDRIVER_OPTION_ARGS = [
     "--disable-setuid-sandbox",
     "--disable-extensions",
 ]
-
+THUMBNAIL_SELENIUM_USER = get_env_variable("THUMBNAIL_SELENIUM_USER", "admin")
 EMAIL_NOTIFICATIONS = True
 EMAIL_REPORTS_USER = get_env_variable("EMAIL_REPORTS_USER" ,"admin")
 EMAIL_REPORTS_PASSWORD = get_env_variable("EMAIL_REPORTS_PASSWORD", "admin")
 WEBDRIVER_BASEURL = get_env_variable("WEBDRIVER_BASEURL", "http://superset:8088/")
-WEBDRIVER_BASEURL_USER_FRIENDLY = WEBDRIVER_BASEURL
+WEBDRIVER_BASEURL_USER_FRIENDLY = get_env_variable("WEBDRIVER_BASEURL_USER_FRIENDLY", WEBDRIVER_BASEURL)
 # ENABLE_SCHEDULED_EMAIL_REPORTS = get_env_variable("ENABLE_SCHEDULED_EMAIL_REPORTS", True)
 
 
