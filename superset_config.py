@@ -70,13 +70,13 @@ SCREENSHOT_LOAD_WAIT = get_env_variable("SCREENSHOT_LOAD_WAIT", 600)
 SLACK_API_TOKEN = get_env_variable("SLACK_API_TOKEN", "slack-api-token")
 
 # Email configuration
-SMTP_HOST = get_env_variable("SMTP_HOST", "smtpdm-ap-southeast-1.aliyun.com")
+SMTP_HOST = get_env_variable("SMTP_HOST", "")
 SMTP_STARTTLS = get_env_variable("SMTP_STARTTLS", False)
 SMTP_SSL = get_env_variable("SMTP_SSL", True)
-SMTP_USER = get_env_variable("SMTP_USER", "noreply@mailer.powerarena.com")
+SMTP_USER = get_env_variable("SMTP_USER", "")
 SMTP_PORT = get_env_variable("SMTP_PORT", 465)
-SMTP_PASSWORD = get_env_variable("SMTP_PASSWORD", "AliPay3427")
-SMTP_MAIL_FROM = get_env_variable("SMTP_MAIL_FROM", "PowerArena Team <noreply@mailer.powerarena.com>")
+SMTP_PASSWORD = get_env_variable("SMTP_PASSWORD", "")
+SMTP_MAIL_FROM = get_env_variable("SMTP_MAIL_FROM", "")
 
 WEBDRIVER_TYPE = "chrome"
 WEBDRIVER_OPTION_ARGS = [
