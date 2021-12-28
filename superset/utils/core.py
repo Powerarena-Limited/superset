@@ -970,15 +970,15 @@ def send_mime_email(
     smtp_user = config["SMTP_USER"]
     smtp_password = config["SMTP_PASSWORD"]
     smtp_starttls = config["SMTP_STARTTLS"]
-    smtp_starttls = False
     smtp_ssl = config["SMTP_SSL"]
-    print("974", smtp_host, smtp_port, smtp_user, smtp_password, smtp_starttls, smtp_ssl)
+    print("@974", smtp_host, smtp_port, smtp_user, smtp_password, smtp_starttls, smtp_ssl)
     if not dryrun:
         smtp = (
             smtplib.SMTP_SSL(smtp_host, smtp_port)
             if smtp_ssl
             else smtplib.SMTP(smtp_host, smtp_port)
         )
+        print("@981", smtp)
         if smtp_starttls:
             smtp.starttls()
         if smtp_user and smtp_password:
