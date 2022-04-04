@@ -43,7 +43,7 @@ interface DashboardCardProps {
   saveFavoriteStatus: (id: number, isStarred: boolean) => void;
   favoriteStatus: boolean;
   dashboardFilter?: string;
-  userId?: number;
+  userId?: string | number;
   showThumbnails?: boolean;
   handleBulkDashboardExport: (dashboardsToExport: Dashboard[]) => void;
 }
@@ -170,11 +170,13 @@ function DashboardCard({
               e.preventDefault();
             }}
           >
-            <FaveStar
-              itemId={dashboard.id}
-              saveFaveStar={saveFavoriteStatus}
-              isStarred={favoriteStatus}
-            />
+            {userId && (
+              <FaveStar
+                itemId={dashboard.id}
+                saveFaveStar={saveFavoriteStatus}
+                isStarred={favoriteStatus}
+              />
+            )}
             <Dropdown overlay={menu}>
               <Icons.MoreVert iconColor={theme.colors.grayscale.base} />
             </Dropdown>
