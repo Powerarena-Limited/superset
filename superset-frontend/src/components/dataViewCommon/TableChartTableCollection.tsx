@@ -355,9 +355,8 @@ let showRowData = (row: object) => {
   let port = "10443"
   try {
     clientName = window.location.href.split("superset-")[1].split(".standalone")[0] || "";
-    port = "10443"
+    port = window.location.href.split("powerarena.com:")[1].split("/")[0] || "10443";
   } catch {
-
   }
   if ("" === clientName) {
     const chartName = $(".editable-title").children().attr('value');
