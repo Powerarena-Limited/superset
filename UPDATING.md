@@ -29,6 +29,8 @@ assists people when migrating to a new version.
 
 ### Potential Downtime
 
+## 1.2.0
+
 ### Deprecations
 
 ### Other

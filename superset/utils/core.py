@@ -983,20 +983,24 @@ def send_mime_email(
     smtp_password = config["SMTP_PASSWORD"]
     smtp_starttls = config["SMTP_STARTTLS"]
     smtp_ssl = config["SMTP_SSL"]
-
+    print("@974", smtp_host, smtp_port, smtp_user, smtp_password, smtp_starttls, smtp_ssl)
     if not dryrun:
-        smtp = (
-            smtplib.SMTP_SSL(smtp_host, smtp_port)
-            if smtp_ssl
-            else smtplib.SMTP(smtp_host, smtp_port)
-        )
+        if smtp_ssl:
+            print("@977, ssl", smtp_ssl)
+            smtp = smtplib.SMTP_SSL(smtp_host, smtp_port)
+        else:
+            print("@980, not ssl", smtp_ssl)
+            smtp = smtplib.SMTP(smtp_host, smtp_port)
+        print("@981", smtp)
         if smtp_starttls:
             smtp.starttls()
         if smtp_user and smtp_password:
+            print("@987, login")
             smtp.login(smtp_user, smtp_password)
         logger.debug("Sent an email to %s", str(e_to))
         smtp.sendmail(e_from, e_to, mime_msg.as_string())
         smtp.quit()
+        print("@991 ===> sending finished!" )
     else:
         logger.info("Dryrun enabled, email notification content is below:")
         logger.info(mime_msg.as_string())

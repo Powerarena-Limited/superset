@@ -146,12 +146,12 @@ const legacyChartDataRequest = async (
       ? SupersetClient.get
       : SupersetClient.post;
   return clientMethod(querySettings).then(({ json, response }) =>
-    // Make the legacy endpoint return a payload that corresponds to the
-    // V1 chart data endpoint response signature.
-    ({
-      response,
-      json: { result: [json] },
-    }),
+  // Make the legacy endpoint return a payload that corresponds to the
+  // V1 chart data endpoint response signature.
+  ({
+    response,
+    json: { result: [json] },
+  }),
   );
 };
 
@@ -543,6 +543,73 @@ export function postChartFormData(
    * This will post the form data to the endpoint, returning a new chart.
    *
    */
+
+  /*
+   * [MODIFY-TIMEZONE]
+   */
+  // console.log("@550", formData['time_range'], formData);
+  // formData['time_range_original'] = formData['time_range'];
+  // if (formData['time_range'].includes("DATEADD") || formData['time_range'].includes("now")) {
+  //   let since = formData['time_range'].split(" : ")[0];
+  //   let until = formData['time_range'].split(" : ")[1];
+
+  //   let getUtcTime = (time) => {
+  //     console.log("@553", time);
+  //     let utcTime = "";
+  //     if (time.includes("now") && !time.includes("DATEADD")) {
+  //       utcTime = new Date(Date.now()).toISOString().split(".")[0];
+  //     } else if (time.includes("DATEADD")) { 
+  //       let relatedUnitMapping = {
+  //         "second": 1, 
+  //         "minute": 60, 
+  //         "hour": 60 * 60, 
+  //         "day": 60 * 60 * 24, 
+  //         "week": 60 * 60 * 24 * 7, 
+  //         "month": 60 * 60 * 24 * 30,
+  //         "quarter": 60 * 60 * 24 * 30 * 3,
+  //         "year": 60 * 60 * 24 * 365
+  //       }
+  //       let related = time.split('DATEADD(DATETIME("')[1].split('")')[0];
+  //       let offset = time.split(", ")[1];
+  //       let unit = time.split(", ")[2].split(")")[0];
+  //       if ("now" === related) {
+  //         related = new Date(Date.now() + 60 * 60 * 8 * 1000).toISOString().split(".")[0];
+  //       }
+  //       let timestamp = Date.parse(related) + offset * relatedUnitMapping[unit] * 1000;
+  //       utcTime = new Date(timestamp).toISOString().split(".")[0];
+  //     } else {
+  //       utcTime = new Date(time).toISOString().split(".")[0];
+  //     }
+  //     return utcTime
+  //   }
+  //   let utcSince = getUtcTime(since);
+  //   let utcUntil = getUtcTime(until);
+    
+  //   formData['time_range'] = utcSince + " : " + utcUntil;
+  //   console.log("@569", formData['time_range']);
+  // } else {
+  //   if (!isNaN(Date.parse(formData['time_range'].split(" : ")[0]))) {
+  //     const since = Date.parse(formData['time_range'].split(" : ")[0]);
+  //     const until = Date.parse(formData['time_range'].split(" : ")[1]);
+  //     const utcSince = new Date(since).toISOString().split(".")[0];
+  //     const utcUntil = new Date(until).toISOString().split(".")[0];
+  //     formData['time_range'] = utcSince + " : " + utcUntil;
+  //   }
+  // }
+  // const mappings = {
+  //   "Last": { "index": 1, "day": 1, "week": 7, "month": 31, "quarter": 91, "year": 365 },
+  //   "previous": { "index": 2, "week": 7, "month": 30, "year": 365 }
+  // }
+  // if ("Last" === formData.time_range.split(" ")[0] || "previous" === formData.time_range.split(" ")[0]) {
+  //   let type = formData.time_range.split(" ")[0];
+  //   const utcSince = new Date(
+  //     Date.parse(new Date(Date.now()).toDateString())
+  //     - mappings[type][formData.time_range.split(" ")[mappings[type]["index"]]] * 24 * 3600 * 1000
+  //   ).toISOString().split(".")[0];
+  //   const utcUntil = new Date(Date.parse(new Date(Date.now()).toDateString())).toISOString().split(".")[0];
+  //   formData['time_range'] = utcSince + " : " + utcUntil;
+  // }
+
   return exploreJSON(
     formData,
     force,

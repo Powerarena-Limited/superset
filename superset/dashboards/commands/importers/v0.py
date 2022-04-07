@@ -70,11 +70,12 @@ def import_chart(
         params["schema"],
         params["database_name"],
     )
+    print("@73", datasource, datasource.id)
     slc_to_import.datasource_id = datasource.id  # type: ignore
-    if slc_to_override:
-        slc_to_override.override(slc_to_import)
-        session.flush()
-        return slc_to_override.id
+    # if slc_to_override:
+    #     slc_to_override.override(slc_to_import)
+    #     session.flush()
+    #     return slc_to_override.id
     session.add(slc_to_import)
     logger.info("Final slice: %s", str(slc_to_import.to_json()))
     session.flush()
@@ -141,6 +142,7 @@ def import_dashboard(
                     value["meta"]["chartId"] = old_to_new_slc_id_dict[old_slice_id]
         dashboard.position_json = json.dumps(position_data)
 
+
     def alter_native_filters(dashboard: Dashboard) -> None:
         json_metadata = json.loads(dashboard.json_metadata)
         native_filter_configuration = json_metadata.get("native_filter_configuration")
@@ -160,6 +162,7 @@ def import_dashboard(
     logger.info("Dashboard has %d slices", len(dashboard_to_import.slices))
     # copy slices object as Slice.import_slice will mutate the slice
     # and will remove the existing dashboard - slice association
+    print("@163", dashboard_to_import.slices)
     slices = copy(dashboard_to_import.slices)
 
     # Clearing the slug to avoid conflicts
@@ -183,6 +186,7 @@ def import_dashboard(
             dashboard_to_import.dashboard_title,
         )
         remote_slc = remote_id_slice_map.get(slc.id)
+        print("@187", slc, slc.id, remote_slc)
         new_slc_id = import_chart(slc, remote_slc, import_time=import_time)
         old_to_new_slc_id_dict[slc.id] = new_slc_id
         # update json metadata that deals with slice ids
@@ -322,8 +326,11 @@ def import_dashboards(
     dataset_id_mapping: Dict[int, int] = {}
     for table in data["datasources"]:
         new_dataset_id = import_dataset(table, database_id, import_time=import_time)
+        print("@324", new_dataset_id)
         params = json.loads(table.params)
+        print(params)
         dataset_id_mapping[params["remote_id"]] = new_dataset_id
+        print(dataset_id_mapping)
 
     session.commit()
     for dashboard in data["dashboards"]:

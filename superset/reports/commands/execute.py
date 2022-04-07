@@ -305,6 +305,7 @@ class BaseReportState:
         ):
             if self._report_schedule.report_format == ReportDataFormat.VISUALIZATION:
                 screenshot_data = self._get_screenshot()
+                print("@275, screenshot_data")
                 if not screenshot_data:
                     error_text = "Unexpected missing screenshot"
             elif (
@@ -357,6 +358,7 @@ class BaseReportState:
         notification_errors = []
         for recipient in recipients:
             notification = create_notification(recipient, notification_content)
+            print("@327, notification")
             try:
                 if app.config["ALERT_REPORTS_NOTIFICATION_DRY_RUN"]:
                     logger.info(
@@ -379,6 +381,7 @@ class BaseReportState:
         :raises: ReportScheduleNotificationError
         """
         notification_content = self._get_notification_content()
+        print("@349 notification_content")
         self._send(notification_content, self._report_schedule.recipients)
 
     def send_error(self, name: str, message: str) -> None:

@@ -28,8 +28,9 @@ import {
   setInLocalStorage,
 } from 'src/utils/localStorageHelpers';
 import ConnectedExploreChartHeader from './ExploreChartHeader';
-import { DataTablesPane } from './DataTablesPane';
+import { DataTablesRawDataPane } from './DataTablesRawDataPane';
 import { buildV1ChartDataPayload } from '../exploreUtils';
+import Button from 'src/components/Button';
 
 const propTypes = {
   actions: PropTypes.object.isRequired,
@@ -38,7 +39,6 @@ const propTypes = {
   can_overwrite: PropTypes.bool.isRequired,
   can_download: PropTypes.bool.isRequired,
   datasource: PropTypes.object,
-  dashboardId: PropTypes.number,
   column_formats: PropTypes.object,
   containerId: PropTypes.string.isRequired,
   height: PropTypes.string.isRequired,
@@ -131,7 +131,7 @@ const ExploreChartPanel = props => {
   const { slice } = props;
   const updateQueryContext = useCallback(
     async function fetchChartData() {
-      if (props.can_overwrite && slice && slice.query_context === null) {
+      if (slice && slice.query_context === null) {
         const queryContext = buildV1ChartDataPayload({
           formData: slice.form_data,
           force: false,
@@ -153,7 +153,6 @@ const ExploreChartPanel = props => {
     },
     [slice],
   );
-
   useEffect(() => {
     updateQueryContext();
   }, [updateQueryContext]);
@@ -254,26 +253,104 @@ const ExploreChartPanel = props => {
     [chartPanelRef, renderChart],
   );
 
+  const buttons = useMemo(
+    () => {
+      try {
+        const titleSelect = $(".title-select").text();
+        if (props.chart.queriesResponse) {
+          if (props.chartName.includes('[H]')) {
+            $(".panel-body").unbind("click").click(
+              function (e) {
+                let target = $(".vx-tooltip-portal").children("div").children("strong").text();
+                let targetItem = target.split(" ");
+                if (3 === targetItem.length) {
+                  props.updateTableForm({
+                    'value': [targetItem[0], targetItem[2]],
+                    'type': titleSelect.includes("flatten") ? 'cycle_time' : 'P_VALUE',
+                    'ops': ['>', '<=']
+                  }, props.chartName);
+                }
+              }
+            );
+          }
+          else if (props.chartName.includes('[TL]')) {
+            $(".panel-body").unbind("click").click(
+              function (e) {
+                let target = $($(".echarts_timeseries_line").children("div").children("div")[1]).html().toString().split('<br>')[0];
+                console.log("@279 clicked!", target);
+                props.updateTableForm({
+                  'value': [target],
+                  'type': [titleSelect.includes("flatten") ? 'event_tz_timezone' : 'P_EVENT_TS'],
+                  'ops': ['time'],
+                }, props.chartName)
+              }
+            )
+          }
+          else if (props.chartName.includes('[L]')) {
+            $(".panel-body").unbind("click").click(
+              function (e) {
+                let target = $(".nvtooltip").children("div").children("table").children("thead").text();
+                props.updateTableForm({
+                  'value': [target],
+                  'type': [titleSelect.includes("flatten") ? 'event_tz_timezone' : 'P_EVENT_TS'],
+                  'ops': ['time'],
+                }, props.chartName)
+              }
+            );
+          } else if (props.chartName.includes('[B_S]')) {
+            return props.chart.queriesResponse[0].data.map((item) => {
+              return <Button
+                class="clickButton"
+                onClick={() => props.updateTableForm({
+                  'value': [[item['key']]],
+                  'type': ['data_type'],
+                  'ops': ['IN']
+                }, props.chartName)}>
+                  {item['key']}
+                </Button>
+            })
+          } else {
+            return Object.entries(props.chart.queriesResponse[0].data[0].values)
+            .map(([key, value]) => {
+              switch (true) {
+                case props.chartName.includes('[TB]'):
+                  const buttonText = new Date(value.x);
+                  const hours = buttonText.getHours();
+                  return <Button
+                    class="clickButton"
+                    onClick={() => props.updateTableForm({
+                      'key': key,
+                      'value': value
+                    }, props.chartName)} >
+                    {buttonText.toISOString().split(".")[0].split("T")[1]}
+                  </Button>
+                case props.chartName.includes('[B]'):
+                  return <Button
+                    class="clickButton"
+                    onClick={() => props.updateTableForm({
+                      'value': [[value.x]],
+                      'type':  titleSelect.includes("flatten") ? ['workstation_name'] : ['M_WORKSTATION_NAME'],
+                      'ops': ['IN']
+                    }, props.chartName)} >
+                    {value.x}
+                  </Button>
+                default:
+                  console.log("no such chart template");
+              }
+            });
+          }
+        }
+      } catch {
+        console.log("@326 template chart name is not match!");
+      }
+    },
+    [chartPanelRef, renderChart]
+  )
+
   const standaloneChartBody = useMemo(
     () => <div ref={chartPanelRef}>{renderChart()}</div>,
     [chartPanelRef, renderChart],
   );
-
-  const [queryFormData, setQueryFormData] = useState(
-    props.chart.latestQueryFormData,
-  );
-
-  useEffect(() => {
-    // only update when `latestQueryFormData` changes AND `triggerRender`
-    // is false. No update should be done when only `triggerRender` changes,
-    // as this can trigger a query downstream based on incomplete form data.
-    // (`latestQueryFormData` is only updated when a a valid request has been
-    // triggered).
-    if (!props.triggerRender) {
-      setQueryFormData(props.chart.latestQueryFormData);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.chart.latestQueryFormData]);
 
   if (props.standalone) {
     // dom manipulation hack to get rid of the boostrap theme's body background
@@ -292,7 +369,6 @@ const ExploreChartPanel = props => {
       addHistory={props.addHistory}
       can_overwrite={props.can_overwrite}
       can_download={props.can_download}
-      dashboardId={props.dashboardId}
       isStarred={props.isStarred}
       slice={props.slice}
       sliceName={props.sliceName}
@@ -317,26 +393,46 @@ const ExploreChartPanel = props => {
       {props.vizType === 'filter_box' ? (
         panelBody
       ) : (
-        <Split
-          sizes={splitSizes}
-          minSize={MIN_SIZES}
-          direction="vertical"
-          gutterSize={gutterHeight}
-          onDragEnd={onDragEnd}
-          elementStyle={elementStyle}
-        >
-          {panelBody}
-          <DataTablesPane
+          <Split
+            sizes={splitSizes}
+            minSize={MIN_SIZES}
+            direction="vertical"
+            gutterSize={gutterHeight}
+            onDragEnd={onDragEnd}
+            elementStyle={elementStyle}
+          >
+            <div>
+              {panelBody}
+
+            </div>
+            {/* <DataTablesPane
             ownState={props.ownState}
-            queryFormData={queryFormData}
+            queryFormData={props.chart.latestQueryFormData}
             tableSectionHeight={tableSectionHeight}
             onCollapseChange={onCollapseChange}
             chartStatus={props.chart.chartStatus}
             errorMessage={props.errorMessage}
             queriesResponse={props.chart.queriesResponse}
-          />
-        </Split>
-      )}
+          /> */}
+            <div>
+              {
+                <div className="clickButtons" >
+                  {buttons}
+                </div>
+              }
+              <DataTablesRawDataPane
+                ownState={props.ownState}
+                queryFormData={props.tableFormData}
+                tableSectionHeight={tableSectionHeight}
+                onCollapseChange={onCollapseChange}
+                chartStatus={props.chart.chartStatus}
+                errorMessage={props.errorMessage}
+                queriesResponse={props.tableQueriesResponse}
+                isQueriesResponseUpdate={props.isTableUpdate}
+              />
+            </div>
+          </Split>
+        )}
     </Styles>
   );
 };

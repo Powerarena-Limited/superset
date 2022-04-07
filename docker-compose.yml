@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-x-superset-image: &superset-image apache/superset:${TAG:-latest-dev}
+x-superset-image: &superset-image registry.gitlab.motherapp.com/powerarena/powerarena-superset:0.1
 x-superset-user: &superset-user root
 x-superset-depends-on: &superset-depends-on
-  - db
-  - redis
+  - superset-db
+  - superset-redis
 x-superset-volumes: &superset-volumes
   # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
   - ./docker:/app/docker
@@ -26,25 +26,27 @@ x-superset-volumes: &superset-volumes
   - ./superset-frontend:/app/superset-frontend
   - superset_home:/app/superset_home
   - ./tests:/app/tests
+  - /etc/timezone:/etc/timezone
+  - /etc/localtime:/etc/localtime
 
 version: "3.7"
 services:
-  redis:
+  superset-redis:
     image: redis:latest
     container_name: superset_cache
     restart: unless-stopped
     ports:
-      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:26379:6379"
     volumes:
       - redis:/data
 
-  db:
+  superset-db:
     env_file: docker/.env
     image: postgres:10
     container_name: superset_db
     restart: unless-stopped
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:25432:5432"
     volumes:
       - db_home:/var/lib/postgresql/data
 
@@ -67,9 +69,9 @@ services:
     build: ./superset-websocket
     image: superset-websocket
     ports:
-      - 8080:8080
+      - 28080:8080
     depends_on:
-      - redis
+      - superset-redis
     # Mount everything in superset-websocket into container and
     # then exclude node_modules and dist with bogus volume mount.
     # This is necessary because host and container need to have
