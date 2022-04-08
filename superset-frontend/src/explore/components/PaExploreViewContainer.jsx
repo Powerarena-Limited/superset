@@ -58,7 +58,7 @@ import {
 import {
   tableFormDataObject,
   flattenTableFormDataObject,
-  sopAllColumns
+  sopAllColumns,
 } from '../tableFormDataObject';
 import { ConsoleSqlOutlined } from '@ant-design/icons';
 
@@ -166,7 +166,9 @@ function useWindowSize({ delayMs = 250 } = {}) {
 
 function ExploreViewContainer(props) {
   // const chartName = $(".editable-title").text() ? $(".editable-title").text() : "";
-  const chartName = $(".editable-title").children().attr('value');
+  const chartName = $('.editable-title').text()
+    ? $('.editable-title').text()
+    : 'no_template';
   const dynamicPluginContext = usePluginContext();
   const dynamicPlugin = dynamicPluginContext.dynamicPlugins[props.vizType];
   const isDynamicPluginLoading = dynamicPlugin && dynamicPlugin.mounting;
@@ -257,21 +259,23 @@ function ExploreViewContainer(props) {
   function handleTableFormData(data, chartName) {
     let timezoneOffset = new Date().getTimezoneOffset() * 60000;
     let period = 3600 * 1000;
-    if (props.form_data.time_grain_sqla == "PT1M") {
+    if (props.form_data.time_grain_sqla == 'PT1M') {
       period = 60 * 1000;
-    } else if (props.form_data.time_grain_sqla == "P1H") {
+    } else if (props.form_data.time_grain_sqla == 'P1H') {
       period = 3600 * 1000;
-    } else if (props.form_data.time_grain_sqla === "P1D") {
+    } else if (props.form_data.time_grain_sqla === 'P1D') {
       period = 86400 * 1000;
-    } else if (props.form_data.time_grain_sqla === "P1M") {
+    } else if (props.form_data.time_grain_sqla === 'P1M') {
       period = 30 * 86400 * 1000;
-    } else if (props.form_data.time_grain_sqla === "P1Y") {
+    } else if (props.form_data.time_grain_sqla === 'P1Y') {
       period = 365 * 86400 * 1000;
     }
     switch (true) {
       case chartName.includes('[TB]'):
-        let startTime = new Date(data.value.x).toISOString().split(".")[0];
-        let endTime = new Date(data.value.x + period).toISOString().split(".")[0];
+        let startTime = new Date(data.value.x).toISOString().split('.')[0];
+        let endTime = new Date(data.value.x + period)
+          .toISOString()
+          .split('.')[0];
         handleTimeRange(startTime + ' : ' + endTime);
         break;
       case chartName.includes('[B]'):
@@ -282,35 +286,62 @@ function ExploreViewContainer(props) {
         break;
       case chartName.includes('[L]'):
         let monthParse = {
-          'Jan': '00', 'Feb': '01', 'Mar': '02', 'Apr': '03', 'May': '04', 'Jun': '05',
-          'Jul': '06', 'Aug': '07', 'Sep': '08', 'Oct': '09', 'Nov': '10', 'Dec': '11'
-        }
-        let item = data['value'][0].split(" ");
-        let now = new Date()
-        let year = now.getFullYear()
+          Jan: '00',
+          Feb: '01',
+          Mar: '02',
+          Apr: '03',
+          May: '04',
+          Jun: '05',
+          Jul: '06',
+          Aug: '07',
+          Sep: '08',
+          Oct: '09',
+          Nov: '10',
+          Dec: '11',
+        };
+        let item = data['value'][0].split(' ');
+        let now = new Date();
+        let year = now.getFullYear();
         let month = monthParse[item[1]];
-        let day = item[2].split(",")[0];
-        let hour = "AM" === item[4] ? parseInt(item[3]) + 8 : parseInt(item[3]) + 12 + 8;
+        let day = item[2].split(',')[0];
+        let hour =
+          'AM' === item[4] ? parseInt(item[3]) + 8 : parseInt(item[3]) + 12 + 8;
         if (!hour) {
           hour = 8;
         }
-        if ("PM" == item[4] && 12 === parseInt(item[3])) {
+        if ('PM' == item[4] && 12 === parseInt(item[3])) {
           hour = parseInt(item[3]) + 8;
         }
         let start = new Date(year, month, day, hour).getTime();
         let end = start + 3600 * 1000;
-        console.log("@300", new Date(start).toISOString().split(".")[0] + ' : ' + new Date(end).toISOString().split(".")[0]);
-        handleTimeRange(new Date(start).toISOString().split(".")[0] + ' : ' + new Date(end).toISOString().split(".")[0]);
+        console.log(
+          '@300',
+          new Date(start).toISOString().split('.')[0] +
+            ' : ' +
+            new Date(end).toISOString().split('.')[0],
+        );
+        handleTimeRange(
+          new Date(start).toISOString().split('.')[0] +
+            ' : ' +
+            new Date(end).toISOString().split('.')[0],
+        );
         break;
       case chartName.includes('[TL]'):
-        let time = Date.parse(data.value[0].split(" ")[0] + "T" + data.value[0].split(" ")[1] + ":00");
+        let time = Date.parse(
+          data.value[0].split(' ')[0] +
+            'T' +
+            data.value[0].split(' ')[1] +
+            ':00',
+        );
         handleTimeRange(
-          new Date(time - timezoneOffset).toISOString().split(".")[0] 
-          + " : " + 
-          new Date(time - timezoneOffset + period).toISOString().split(".")[0]
+          new Date(time - timezoneOffset).toISOString().split('.')[0] +
+            ' : ' +
+            new Date(time - timezoneOffset + period)
+              .toISOString()
+              .split('.')[0],
         );
         // handleTimeRange();
-        break
+        break;
       case chartName.includes('[B_S]'):
         handleAdhocFiltersWorkstationAndDataType(data);
         break;
@@ -322,7 +353,11 @@ function ExploreViewContainer(props) {
   }
 
   function clearTableFormDataPreviouslyAdhocFilters(type) {
-    for (let filter = 0; filter < tableFormData.adhoc_filters.length; filter++) {
+    for (
+      let filter = 0;
+      filter < tableFormData.adhoc_filters.length;
+      filter++
+    ) {
       if (type === tableFormData.adhoc_filters[filter].subject) {
         tableFormData.adhoc_filters.splice(filter, 1);
         filter--;
@@ -334,16 +369,17 @@ function ExploreViewContainer(props) {
     clearTableFormDataPreviouslyAdhocFilters(data.type);
     for (let op in data['ops']) {
       tableFormData.adhoc_filters.push({
-        "clause": "WHERE",
-        "comparator": data.value[op],
-        "expressionType": "SIMPLE",
-        "filterOptionName": "filter_ll23os3h1g_yz7d0689uf",
-        "isExtra": false,
-        "isNew": false,
-        "operator": data.ops[op],
-        "operatorId": ">=" === data.ops[op] ? "GREATER_THAN" : "LESS_THAN_OR_EQUAL",
-        "sqlExpression": null,
-        "subject": data.type
+        clause: 'WHERE',
+        comparator: data.value[op],
+        expressionType: 'SIMPLE',
+        filterOptionName: 'filter_ll23os3h1g_yz7d0689uf',
+        isExtra: false,
+        isNew: false,
+        operator: data.ops[op],
+        operatorId:
+          '>=' === data.ops[op] ? 'GREATER_THAN' : 'LESS_THAN_OR_EQUAL',
+        sqlExpression: null,
+        subject: data.type,
       });
     }
   }
@@ -351,31 +387,37 @@ function ExploreViewContainer(props) {
   function handleAdhocFiltersWorkstationAndDataType(data) {
     for (let i = 0; i < data.type.length; i++) {
       clearTableFormDataPreviouslyAdhocFilters(data.type[i]);
-      if ("M_WORKSTATION_NAME" === data.type[i] || "workstation_name" === data.type[i]) {
+      if (
+        'M_WORKSTATION_NAME' === data.type[i] ||
+        'workstation_name' === data.type[i]
+      ) {
         tableFormData.adhoc_filters.push({
-          "expressionType": "SIMPLE",
-          "subject": data.type[i],
-          "operator": "IN",
-          "operatorId": "IN",
-          "comparator": data.value[i],
-          "clause": "WHERE",
-          "sqlExpression": null,
-          "isExtra": false,
-          "isNew": false,
-          "filterOptionName": "filter_pnegf7yxd1g_3523x62uhnf"
+          expressionType: 'SIMPLE',
+          subject: data.type[i],
+          operator: 'IN',
+          operatorId: 'IN',
+          comparator: data.value[i],
+          clause: 'WHERE',
+          sqlExpression: null,
+          isExtra: false,
+          isNew: false,
+          filterOptionName: 'filter_pnegf7yxd1g_3523x62uhnf',
         });
-      } else if ("P_DATA_TYPE" === data.type[i] || "data_type" === data.type[i]) {
+      } else if (
+        'P_DATA_TYPE' === data.type[i] ||
+        'data_type' === data.type[i]
+      ) {
         tableFormData.adhoc_filters.push({
-          "expressionType": "SIMPLE",
-          "subject": data.type[i],
-          "operator": "IN",
-          "operatorId": "IN",
-          "comparator": data.value[i],
-          "clause": "WHERE",
-          "sqlExpression": null,
-          "isExtra": false,
-          "isNew": false,
-          "filterOptionName": "filter_mawvcnf4jjf_e4v5sjk2bxj"
+          expressionType: 'SIMPLE',
+          subject: data.type[i],
+          operator: 'IN',
+          operatorId: 'IN',
+          comparator: data.value[i],
+          clause: 'WHERE',
+          sqlExpression: null,
+          isExtra: false,
+          isNew: false,
+          filterOptionName: 'filter_mawvcnf4jjf_e4v5sjk2bxj',
         });
       }
     }
@@ -496,23 +538,41 @@ function ExploreViewContainer(props) {
       tableFormData.time_grain_sqla = props.form_data.time_grain_sqla;
     } else {
       let time_range = $('*[data-test="time-range-trigger"]').last().text();
-      tableFormData.time_range = time_range.split(" ≤ col < ")[0] + " : " + time_range.split(" ≤ col < ")[1];
-      if (undefined === time_range.split(" ≤ col < ")[1]) {
+      tableFormData.time_range =
+        time_range.split(' ≤ col < ')[0] +
+        ' : ' +
+        time_range.split(' ≤ col < ')[1];
+      if (undefined === time_range.split(' ≤ col < ')[1]) {
         tableFormData.time_range = props.form_data.time_range;
       }
     }
 
     if (undefined === tableFormData.adhoc_filters) {
-      tableFormData.adhoc_filters = Object.assign([], props.form_data.adhoc_filters);
+      tableFormData.adhoc_filters = Object.assign(
+        [],
+        props.form_data.adhoc_filters,
+      );
     }
 
-    console.log("@495", tableFormData.time_range, props.form_data.time_range, tableFormData, props.form_data);
+    console.log(
+      '@495',
+      tableFormData.time_range,
+      props.form_data.time_range,
+      tableFormData,
+      props.form_data,
+    );
     if (tableFormData.adhoc_filters) {
       for (let i = 0; i < props.form_data.adhoc_filters.length; i++) {
-        if (props.form_data.adhoc_filters[i]['subject'] == "P_DATA_TYPE") {
+        if (props.form_data.adhoc_filters[i]['subject'] == 'P_DATA_TYPE') {
           for (let j = 0; j < tableFormData.adhoc_filters.length; j++) {
-            if (tableFormData.adhoc_filters[j]['subject'] == props.form_data.adhoc_filters[i]['subject']) {
-              tableFormData.adhoc_filters[j] = Object.assign({}, props.form_data.adhoc_filters[i]);
+            if (
+              tableFormData.adhoc_filters[j]['subject'] ==
+              props.form_data.adhoc_filters[i]['subject']
+            ) {
+              tableFormData.adhoc_filters[j] = Object.assign(
+                {},
+                props.form_data.adhoc_filters[i],
+              );
             }
           }
         }
@@ -523,19 +583,27 @@ function ExploreViewContainer(props) {
     tableFormData.datasource = props.form_data.datasource;
     tableFormData.row_limit = props.form_data.row_limit;
 
-    const datasetName = $(".title-select").text();
-    if (datasetName.includes("flatten_")) {
-      tableFormData.all_columns = flattenTableFormDataObject.all_columns
-    } else if (datasetName.includes("sop_")) {
-      tableFormData.all_columns = sopAllColumns
+    const datasetName = $('.title-select').text();
+    if (datasetName.includes('flatten_')) {
+      tableFormData.all_columns = flattenTableFormDataObject.all_columns;
+    } else if (datasetName.includes('sop_')) {
+      tableFormData.all_columns = sopAllColumns;
     }
-    console.log("@531", tableFormData)
+    console.log('@531', tableFormData);
     // key should large than props.form_data.slice_id;
-    props.actions.postChartFormData(tableFormData, false, 60, 10000000000, undefined, undefined)
+    props.actions
+      .postChartFormData(
+        tableFormData,
+        false,
+        60,
+        10000000000,
+        undefined,
+        undefined,
+      )
       .then(json => {
         setTableQueriesResponse(json[0].queriesResponse);
       });
-  }, [isTableUpdate, tableFormData])
+  }, [isTableUpdate, tableFormData]);
 
   const chartIsStale = useMemo(() => {
     if (lastQueriedControls) {

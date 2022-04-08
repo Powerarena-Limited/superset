@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-x-superset-image: &superset-image registry.gitlab.motherapp.com/powerarena/powerarena-superset:0.1
+x-superset-image: &superset-image apache/superset:1.4.2
 x-superset-user: &superset-user root
 x-superset-depends-on: &superset-depends-on
   - superset-db
@@ -48,7 +48,7 @@ services:
     ports:
       - "127.0.0.1:25432:5432"
     volumes:
-      - db_home:/var/lib/postgresql/data
+      - db_home_2:/var/lib/postgresql/data
 
   superset:
     env_file: docker/.env
@@ -153,7 +153,7 @@ services:
 volumes:
   superset_home:
     external: false
-  db_home:
+  db_home_2:
     external: false
   redis:
     external: false

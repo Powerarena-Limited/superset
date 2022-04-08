@@ -28,6 +28,7 @@ import {
   setInLocalStorage,
 } from 'src/utils/localStorageHelpers';
 import ConnectedExploreChartHeader from './ExploreChartHeader';
+import { DataTablesPane } from './DataTablesPane';
 import { DataTablesRawDataPane } from './DataTablesRawDataPane';
 import { buildV1ChartDataPayload } from '../exploreUtils';
 import Button from 'src/components/Button';
@@ -253,99 +254,155 @@ const ExploreChartPanel = props => {
     [chartPanelRef, renderChart],
   );
 
-  const buttons = useMemo(
-    () => {
-      try {
-        const titleSelect = $(".title-select").text();
-        if (props.chart.queriesResponse) {
-          if (props.chartName.includes('[H]')) {
-            $(".panel-body").unbind("click").click(
-              function (e) {
-                let target = $(".vx-tooltip-portal").children("div").children("strong").text();
-                let targetItem = target.split(" ");
-                if (3 === targetItem.length) {
-                  props.updateTableForm({
-                    'value': [targetItem[0], targetItem[2]],
-                    'type': titleSelect.includes("flatten") ? 'cycle_time' : 'P_VALUE',
-                    'ops': ['>', '<=']
-                  }, props.chartName);
-                }
-              }
-            );
-          }
-          else if (props.chartName.includes('[TL]')) {
-            $(".panel-body").unbind("click").click(
-              function (e) {
-                let target = $($(".echarts_timeseries_line").children("div").children("div")[1]).html().toString().split('<br>')[0];
-                console.log("@279 clicked!", target);
-                props.updateTableForm({
-                  'value': [target],
-                  'type': [titleSelect.includes("flatten") ? 'event_tz_timezone' : 'P_EVENT_TS'],
-                  'ops': ['time'],
-                }, props.chartName)
-              }
-            )
-          }
-          else if (props.chartName.includes('[L]')) {
-            $(".panel-body").unbind("click").click(
-              function (e) {
-                let target = $(".nvtooltip").children("div").children("table").children("thead").text();
-                props.updateTableForm({
-                  'value': [target],
-                  'type': [titleSelect.includes("flatten") ? 'event_tz_timezone' : 'P_EVENT_TS'],
-                  'ops': ['time'],
-                }, props.chartName)
-              }
-            );
-          } else if (props.chartName.includes('[B_S]')) {
-            return props.chart.queriesResponse[0].data.map((item) => {
-              return <Button
-                class="clickButton"
-                onClick={() => props.updateTableForm({
-                  'value': [[item['key']]],
-                  'type': ['data_type'],
-                  'ops': ['IN']
-                }, props.chartName)}>
-                  {item['key']}
-                </Button>
-            })
-          } else {
-            return Object.entries(props.chart.queriesResponse[0].data[0].values)
-            .map(([key, value]) => {
-              switch (true) {
-                case props.chartName.includes('[TB]'):
-                  const buttonText = new Date(value.x);
-                  const hours = buttonText.getHours();
-                  return <Button
-                    class="clickButton"
-                    onClick={() => props.updateTableForm({
-                      'key': key,
-                      'value': value
-                    }, props.chartName)} >
-                    {buttonText.toISOString().split(".")[0].split("T")[1]}
-                  </Button>
-                case props.chartName.includes('[B]'):
-                  return <Button
-                    class="clickButton"
-                    onClick={() => props.updateTableForm({
-                      'value': [[value.x]],
-                      'type':  titleSelect.includes("flatten") ? ['workstation_name'] : ['M_WORKSTATION_NAME'],
-                      'ops': ['IN']
-                    }, props.chartName)} >
-                    {value.x}
-                  </Button>
-                default:
-                  console.log("no such chart template");
+  const buttons = useMemo(() => {
+    console.log('@257', props.chartName);
+    try {
+      const titleSelect = $('.title-select').text();
+      if (props.chart.queriesResponse) {
+        if (props.chartName.includes('[H]')) {
+          $('.panel-body')
+            .unbind('click')
+            .click(function (e) {
+              let target = $('.vx-tooltip-portal')
+                .children('div')
+                .children('strong')
+                .text();
+              let targetItem = target.split(' ');
+              if (3 === targetItem.length) {
+                props.updateTableForm(
+                  {
+                    value: [targetItem[0], targetItem[2]],
+                    type: titleSelect.includes('flatten')
+                      ? 'cycle_time'
+                      : 'P_VALUE',
+                    ops: ['>', '<='],
+                  },
+                  props.chartName,
+                );
               }
             });
-          }
+        } else if (props.chartName.includes('[TL]')) {
+          $('.panel-body')
+            .unbind('click')
+            .click(function (e) {
+              let target = $(
+                $('.echarts_timeseries_line')
+                  .children('div')
+                  .children('div')[1],
+              )
+                .html()
+                .toString()
+                .split('<br>')[0];
+              console.log('@279 clicked!', target);
+              props.updateTableForm(
+                {
+                  value: [target],
+                  type: [
+                    titleSelect.includes('flatten')
+                      ? 'event_tz_timezone'
+                      : 'P_EVENT_TS',
+                  ],
+                  ops: ['time'],
+                },
+                props.chartName,
+              );
+            });
+        } else if (props.chartName.includes('[L]')) {
+          $('.panel-body')
+            .unbind('click')
+            .click(function (e) {
+              let target = $('.nvtooltip')
+                .children('div')
+                .children('table')
+                .children('thead')
+                .text();
+              props.updateTableForm(
+                {
+                  value: [target],
+                  type: [
+                    titleSelect.includes('flatten')
+                      ? 'event_tz_timezone'
+                      : 'P_EVENT_TS',
+                  ],
+                  ops: ['time'],
+                },
+                props.chartName,
+              );
+            });
+        } else if (props.chartName.includes('[B_S]')) {
+          return props.chart.queriesResponse[0].data.map(item => {
+            return (
+              <Button
+                class="clickButton"
+                onClick={() =>
+                  props.updateTableForm(
+                    {
+                      value: [[item['key']]],
+                      type: ['data_type'],
+                      ops: ['IN'],
+                    },
+                    props.chartName,
+                  )
+                }
+              >
+                {item['key']}
+              </Button>
+            );
+          });
+        } else {
+          return Object.entries(
+            props.chart.queriesResponse[0].data[0].values,
+          ).map(([key, value]) => {
+            switch (true) {
+              case props.chartName.includes('[TB]'):
+                const buttonText = new Date(value.x);
+                const hours = buttonText.getHours();
+                return (
+                  <Button
+                    class="clickButton"
+                    onClick={() =>
+                      props.updateTableForm(
+                        {
+                          key: key,
+                          value: value,
+                        },
+                        props.chartName,
+                      )
+                    }
+                  >
+                    {buttonText.toISOString().split('.')[0].split('T')[1]}
+                  </Button>
+                );
+              case props.chartName.includes('[B]'):
+                return (
+                  <Button
+                    class="clickButton"
+                    onClick={() =>
+                      props.updateTableForm(
+                        {
+                          value: [[value.x]],
+                          type: titleSelect.includes('flatten')
+                            ? ['workstation_name']
+                            : ['M_WORKSTATION_NAME'],
+                          ops: ['IN'],
+                        },
+                        props.chartName,
+                      )
+                    }
+                  >
+                    {value.x}
+                  </Button>
+                );
+              default:
+                console.log('no such chart template');
+            }
+          });
         }
-      } catch {
-        console.log("@326 template chart name is not match!");
       }
-    },
-    [chartPanelRef, renderChart]
-  )
+    } catch {
+      console.log('@326·chartName·error');
+    }
+  }, [chartPanelRef, renderChart]);
 
   const standaloneChartBody = useMemo(
     () => <div ref={chartPanelRef}>{renderChart()}</div>,
@@ -393,19 +450,16 @@ const ExploreChartPanel = props => {
       {props.vizType === 'filter_box' ? (
         panelBody
       ) : (
-          <Split
-            sizes={splitSizes}
-            minSize={MIN_SIZES}
-            direction="vertical"
-            gutterSize={gutterHeight}
-            onDragEnd={onDragEnd}
-            elementStyle={elementStyle}
-          >
-            <div>
-              {panelBody}
-
-            </div>
-            {/* <DataTablesPane
+        <Split
+          sizes={splitSizes}
+          minSize={MIN_SIZES}
+          direction="vertical"
+          gutterSize={gutterHeight}
+          onDragEnd={onDragEnd}
+          elementStyle={elementStyle}
+        >
+          <div>{panelBody}</div>
+          {/* <DataTablesPane
             ownState={props.ownState}
             queryFormData={props.chart.latestQueryFormData}
             tableSectionHeight={tableSectionHeight}
@@ -414,25 +468,21 @@ const ExploreChartPanel = props => {
             errorMessage={props.errorMessage}
             queriesResponse={props.chart.queriesResponse}
           /> */}
-            <div>
-              {
-                <div className="clickButtons" >
-                  {buttons}
-                </div>
-              }
-              <DataTablesRawDataPane
-                ownState={props.ownState}
-                queryFormData={props.tableFormData}
-                tableSectionHeight={tableSectionHeight}
-                onCollapseChange={onCollapseChange}
-                chartStatus={props.chart.chartStatus}
-                errorMessage={props.errorMessage}
-                queriesResponse={props.tableQueriesResponse}
-                isQueriesResponseUpdate={props.isTableUpdate}
-              />
-            </div>
-          </Split>
-        )}
+          <div>
+            {<div className="clickButtons">{buttons}</div>}
+            <DataTablesRawDataPane
+              ownState={props.ownState}
+              queryFormData={props.tableFormData}
+              tableSectionHeight={tableSectionHeight}
+              onCollapseChange={onCollapseChange}
+              chartStatus={props.chart.chartStatus}
+              errorMessage={props.errorMessage}
+              queriesResponse={props.tableQueriesResponse}
+              isQueriesResponseUpdate={props.isTableUpdate}
+            />
+          </div>
+        </Split>
+      )}
     </Styles>
   );
 };

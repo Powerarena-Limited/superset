@@ -112,6 +112,7 @@ export const DataTablesRawDataPane = ({
   chartStatus,
   ownState,
   errorMessage,
+  queriesResponse,
   isQueriesResponseUpdate
 }: {
   queryFormData: Record<string, any>;
@@ -120,6 +121,7 @@ export const DataTablesRawDataPane = ({
   ownState?: JsonObject;
   onCollapseChange: (openPanelName: string) => void;
   errorMessage?: JSX.Element;
+  queriesResponse: Record<string, any>
   isQueriesResponseUpdate?: boolean;
 }) => {
   const [data, setData] = useState<{
@@ -130,6 +132,7 @@ export const DataTablesRawDataPane = ({
     [RESULT_TYPES.results]: true,
     [RESULT_TYPES.samples]: true,
   });
+  const [columnNames, setColumnNames] = useState<string[]>([]);
   const [error, setError] = useState(NULLISH_RESULTS_STATE);
   const [filterText, setFilterText] = useState('');
   const [activeTabKey, setActiveTabKey] = useState<string>(
@@ -223,6 +226,14 @@ export const DataTablesRawDataPane = ({
   }, [isQueriesResponseUpdate, queryFormData.adhoc_filters, queryFormData.datasource]);
 
   useEffect(() => {
+    if (queriesResponse.length > 0) {
+      const { colnames } = queriesResponse[0];
+      console.log("231", queriesResponse, colnames, chartStatus)
+      setColumnNames([...colnames]);
+    }
+  }, [isQueriesResponseUpdate, queriesResponse]);
+
+  useEffect(() => {
     if (panelOpen && isRequestPending[RESULT_TYPES.results]) {
       if (errorMessage) {
         setIsRequestPending(prevState => ({
@@ -280,12 +291,24 @@ export const DataTablesRawDataPane = ({
     ),
   };
 
+  // const columns = {
+  //   [RESULT_TYPES.results]: useTableColumns(data[RESULT_TYPES.results]),
+  //   [RESULT_TYPES.samples]: useTableColumns(data[RESULT_TYPES.samples]),
+  // };
+
   const columns = {
-    [RESULT_TYPES.results]: useTableColumns(data[RESULT_TYPES.results]),
-    [RESULT_TYPES.samples]: useTableColumns(data[RESULT_TYPES.samples]),
+    [RESULT_TYPES.results]: useTableColumns(
+      columnNames,
+      data[RESULT_TYPES.results],
+    ),
+    [RESULT_TYPES.samples]: useTableColumns(
+      columnNames,
+      data[RESULT_TYPES.samples],
+    ),
   };
 
   const renderDataTable = (type: string) => {
+    console.log("@289, columns", data, columns);
     if (isLoading[type]) {
       return <Loading />;
     }

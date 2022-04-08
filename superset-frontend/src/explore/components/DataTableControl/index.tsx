@@ -120,8 +120,9 @@ export const useTableColumns = (
   colnames?: string[],
   data?: Record<string, any>[],
   moreConfigs?: { [key: string]: Partial<Column> },
-) =>
-  useMemo(
+) => {
+  console.log("@124", colnames, data)
+  return useMemo(
     () =>
       colnames && data?.length
         ? colnames
@@ -145,4 +146,4 @@ export const useTableColumns = (
             )
         : [],
     [data, moreConfigs],
-  );
+  );}
