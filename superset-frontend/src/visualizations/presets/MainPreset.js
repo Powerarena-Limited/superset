@@ -39,6 +39,7 @@ import SunburstChartPlugin from '@superset-ui/legacy-plugin-chart-sunburst';
 import TableChartPlugin from '@superset-ui/plugin-chart-table';
 import TreemapChartPlugin from '@superset-ui/legacy-plugin-chart-treemap';
 import { WordCloudChartPlugin } from '@superset-ui/plugin-chart-word-cloud';
+import { HelloWorldChartPlugin } from '@superset-ui/plugin-chart-hello-world';
 import WorldMapChartPlugin from '@superset-ui/legacy-plugin-chart-world-map';
 import {
   AreaChartPlugin,
@@ -119,6 +120,7 @@ export default class MainPreset extends Preset {
           key: 'mixed_timeseries',
         }),
         new HeatmapChartPlugin().configure({ key: 'heatmap' }),
+        new HelloWorldChartPlugin().configure({ key: 'plotly_plot' }),
         new HistogramChartPlugin().configure({ key: 'histogram' }),
         new HorizonChartPlugin().configure({ key: 'horizon' }),
         new LineChartPlugin().configure({ key: 'line' }),

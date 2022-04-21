@@ -91,3 +91,5 @@ release.json
 messages.mo
 
 docker/requirements-local.txt
+*.zip
+*.bak

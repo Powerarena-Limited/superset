@@ -226,9 +226,8 @@ export const DataTablesRawDataPane = ({
   }, [isQueriesResponseUpdate, queryFormData.adhoc_filters, queryFormData.datasource]);
 
   useEffect(() => {
-    if (queriesResponse.length > 0) {
+    if (queriesResponse.length > 0 && queriesResponse[0].colnames) {
       const { colnames } = queriesResponse[0];
-      console.log("231", queriesResponse, colnames, chartStatus)
       setColumnNames([...colnames]);
     }
   }, [isQueriesResponseUpdate, queriesResponse]);
@@ -308,7 +307,6 @@ export const DataTablesRawDataPane = ({
   };
 
   const renderDataTable = (type: string) => {
-    console.log("@289, columns", data, columns);
     if (isLoading[type]) {
       return <Loading />;
     }
