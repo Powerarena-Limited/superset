@@ -263,5 +263,6 @@ module.exports = {
     'react/sort-comp': 0, // TODO: re-enable in separate PR
     'react/static-property-placement': 0, // disabled temporarily
     'prettier/prettier': 'error',
+    "react-hooks/exhaustive-deps": "off",
   },
 };

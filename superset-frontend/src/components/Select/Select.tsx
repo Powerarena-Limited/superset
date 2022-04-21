@@ -197,9 +197,8 @@ const Select = ({
   const shouldShowSearch = isAsync || allowNewOptions ? true : showSearch;
   const initialOptions =
     options && Array.isArray(options) ? options : EMPTY_OPTIONS;
-  const [selectOptions, setSelectOptions] = useState<OptionsType>(
-    initialOptions,
-  );
+  const [selectOptions, setSelectOptions] =
+    useState<OptionsType>(initialOptions);
   const shouldUseChildrenOptions = !!selectOptions.find(
     opt => opt?.customLabel,
   );

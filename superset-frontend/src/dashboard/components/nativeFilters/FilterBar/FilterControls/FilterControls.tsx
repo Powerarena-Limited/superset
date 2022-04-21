@@ -67,9 +67,8 @@ const FilterControls: FC<FilterControlsProps> = ({
   }, [JSON.stringify(filterValues), dataMaskSelected]);
   const cascadeFilterIds = new Set(cascadeFilters.map(item => item.id));
 
-  const [filtersInScope, filtersOutOfScope] = useSelectFiltersInScope(
-    cascadeFilters,
-  );
+  const [filtersInScope, filtersOutOfScope] =
+    useSelectFiltersInScope(cascadeFilters);
   const dashboardHasTabs = useDashboardHasTabs();
   const showCollapsePanel = dashboardHasTabs && cascadeFilters.length > 0;
 

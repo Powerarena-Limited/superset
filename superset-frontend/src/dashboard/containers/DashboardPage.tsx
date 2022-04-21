@@ -48,15 +48,12 @@ const DashboardPage: FC = () => {
   const dispatch = useDispatch();
   const { addDangerToast } = useToasts();
   const { idOrSlug } = useParams<{ idOrSlug: string }>();
-  const { result: dashboard, error: dashboardApiError } = useDashboard(
-    idOrSlug,
-  );
-  const { result: charts, error: chartsApiError } = useDashboardCharts(
-    idOrSlug,
-  );
-  const { result: datasets, error: datasetsApiError } = useDashboardDatasets(
-    idOrSlug,
-  );
+  const { result: dashboard, error: dashboardApiError } =
+    useDashboard(idOrSlug);
+  const { result: charts, error: chartsApiError } =
+    useDashboardCharts(idOrSlug);
+  const { result: datasets, error: datasetsApiError } =
+    useDashboardDatasets(idOrSlug);
   const isDashboardHydrated = useRef(false);
 
   const error = dashboardApiError || chartsApiError;

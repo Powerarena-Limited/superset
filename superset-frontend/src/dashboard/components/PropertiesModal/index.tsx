@@ -278,12 +278,8 @@ const PropertiesModal = ({
   };
 
   const onFinish = () => {
-    const {
-      title,
-      slug,
-      certifiedBy,
-      certificationDetails,
-    } = form.getFieldsValue();
+    const { title, slug, certifiedBy, certificationDetails } =
+      form.getFieldsValue();
     let currentColorScheme = colorScheme;
     let colorNamespace = '';
 

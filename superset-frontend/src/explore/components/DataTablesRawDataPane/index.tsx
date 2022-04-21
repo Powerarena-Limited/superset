@@ -21,7 +21,10 @@ import { JsonObject, styled, t } from '@superset-ui/core';
 import Collapse from 'src/components/Collapse';
 import Tabs from 'src/components/Tabs';
 import Loading from 'src/components/Loading';
-import { TableChartTableView as TableView ,EmptyWrapperType} from 'src/components/TableView';
+import {
+  TableChartTableView as TableView,
+  EmptyWrapperType,
+} from 'src/components/TableView';
 import { getChartDataRequest } from 'src/chart/chartAction';
 import { getClientErrorObject } from 'src/utils/getClientErrorObject';
 import {
@@ -113,7 +116,7 @@ export const DataTablesRawDataPane = ({
   ownState,
   errorMessage,
   queriesResponse,
-  isQueriesResponseUpdate
+  isQueriesResponseUpdate,
 }: {
   queryFormData: Record<string, any>;
   tableSectionHeight: number;
@@ -121,7 +124,7 @@ export const DataTablesRawDataPane = ({
   ownState?: JsonObject;
   onCollapseChange: (openPanelName: string) => void;
   errorMessage?: JSX.Element;
-  queriesResponse: Record<string, any>
+  queriesResponse: Record<string, any>;
   isQueriesResponseUpdate?: boolean;
 }) => {
   const [data, setData] = useState<{
@@ -223,7 +226,11 @@ export const DataTablesRawDataPane = ({
       ...prevState,
       [RESULT_TYPES.samples]: true,
     }));
-  }, [isQueriesResponseUpdate, queryFormData.adhoc_filters, queryFormData.datasource]);
+  }, [
+    isQueriesResponseUpdate,
+    queryFormData.adhoc_filters,
+    queryFormData.datasource,
+  ]);
 
   useEffect(() => {
     if (queriesResponse.length > 0 && queriesResponse[0].colnames) {

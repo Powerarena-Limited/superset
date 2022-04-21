@@ -21,7 +21,10 @@ import isEqual from 'lodash/isEqual';
 import { styled, t } from '@superset-ui/core';
 import { useFilters, usePagination, useSortBy, useTable } from 'react-table';
 import { Empty } from 'src/common/components';
-import { TableChartTableCollection, Pagination } from 'src/components/dataViewCommon';
+import {
+  TableChartTableCollection,
+  Pagination,
+} from 'src/components/dataViewCommon';
 import { SortByType, ServerPagination } from './types';
 
 const DEFAULT_PAGE_SIZE = 10;

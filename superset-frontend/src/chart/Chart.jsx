@@ -108,9 +108,8 @@ const RefreshOverlayWrapper = styled.div`
 class Chart extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.handleRenderContainerFailure = this.handleRenderContainerFailure.bind(
-      this,
-    );
+    this.handleRenderContainerFailure =
+      this.handleRenderContainerFailure.bind(this);
   }
 
   componentDidMount() {

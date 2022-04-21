@@ -146,12 +146,12 @@ const legacyChartDataRequest = async (
       ? SupersetClient.get
       : SupersetClient.post;
   return clientMethod(querySettings).then(({ json, response }) =>
-  // Make the legacy endpoint return a payload that corresponds to the
-  // V1 chart data endpoint response signature.
-  ({
-    response,
-    json: { result: [json] },
-  }),
+    // Make the legacy endpoint return a payload that corresponds to the
+    // V1 chart data endpoint response signature.
+    ({
+      response,
+      json: { result: [json] },
+    }),
   );
 };
 
@@ -558,13 +558,13 @@ export function postChartFormData(
   //     let utcTime = "";
   //     if (time.includes("now") && !time.includes("DATEADD")) {
   //       utcTime = new Date(Date.now()).toISOString().split(".")[0];
-  //     } else if (time.includes("DATEADD")) { 
+  //     } else if (time.includes("DATEADD")) {
   //       let relatedUnitMapping = {
-  //         "second": 1, 
-  //         "minute": 60, 
-  //         "hour": 60 * 60, 
-  //         "day": 60 * 60 * 24, 
-  //         "week": 60 * 60 * 24 * 7, 
+  //         "second": 1,
+  //         "minute": 60,
+  //         "hour": 60 * 60,
+  //         "day": 60 * 60 * 24,
+  //         "week": 60 * 60 * 24 * 7,
   //         "month": 60 * 60 * 24 * 30,
   //         "quarter": 60 * 60 * 24 * 30 * 3,
   //         "year": 60 * 60 * 24 * 365
@@ -584,7 +584,7 @@ export function postChartFormData(
   //   }
   //   let utcSince = getUtcTime(since);
   //   let utcUntil = getUtcTime(until);
-    
+
   //   formData['time_range'] = utcSince + " : " + utcUntil;
   //   console.log("@569", formData['time_range']);
   // } else {
@@ -641,8 +641,8 @@ export function redirectSQLLab(formData) {
 export function refreshChart(chartKey, force, dashboardId) {
   return (dispatch, getState) => {
     const chart = (getState().charts || {})[chartKey];
-    const timeout = getState().dashboardInfo.common.conf
-      .SUPERSET_WEBSERVER_TIMEOUT;
+    const timeout =
+      getState().dashboardInfo.common.conf.SUPERSET_WEBSERVER_TIMEOUT;
 
     if (
       !chart.latestQueryFormData ||
