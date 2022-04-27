@@ -202,9 +202,12 @@ export function createErrorHandler(
       errorsArray &&
       errorsArray.length &&
       config &&
+      // @ts-expect-error: Unreachable code error
       config.ERRORS &&
+      // @ts-expect-error: Unreachable code error
       errorsArray[0].error_type in config.ERRORS
     ) {
+      // @ts-expect-error: Unreachable code error
       parsedError.message = config.ERRORS[errorsArray[0].error_type];
     }
     logging.error(e);

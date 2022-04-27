@@ -605,10 +605,13 @@ export const copyQueryLink = (
     });
 };
 
+// @ts-expect-error: Unreachable code error
 export const getDatabaseImages = () => SupersetText.DB_IMAGES;
 
+// @ts-expect-error: Unreachable code error
 export const getConnectionAlert = () => SupersetText.DB_CONNECTION_ALERTS;
 export const getDatabaseDocumentationLinks = () =>
+  // @ts-expect-error: Unreachable code error
   SupersetText.DB_CONNECTION_DOC_LINKS;
 
 export const testDatabaseConnection = (

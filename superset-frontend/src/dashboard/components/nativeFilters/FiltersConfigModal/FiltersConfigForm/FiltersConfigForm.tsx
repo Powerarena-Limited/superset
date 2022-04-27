@@ -378,6 +378,7 @@ const FiltersConfigForm = (
 
   // @ts-ignore
   const hasDataset =
+    // @ts-expect-error: Unreachable code error
     !!nativeFilterItems[formFilter?.filterType]?.value?.datasourceCount;
 
   const datasetId =
