@@ -24,6 +24,7 @@ x-superset-volumes: &superset-volumes
   - ./docker:/app/docker
   - ./superset:/app/superset
   - ./superset-frontend:/app/superset-frontend
+  - ./superset-ui:/app/superset-ui
   - superset_home:/app/superset_home
   - ./tests:/app/tests
   - /etc/timezone:/etc/timezone
