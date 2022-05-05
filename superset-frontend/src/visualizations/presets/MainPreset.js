@@ -40,6 +40,7 @@ import TableChartPlugin from '@superset-ui/plugin-chart-table';
 import TreemapChartPlugin from '@superset-ui/legacy-plugin-chart-treemap';
 import { WordCloudChartPlugin } from '@superset-ui/plugin-chart-word-cloud';
 import { ScatterPlotPlugin } from '@superset-ui/plugin-chart-hello-world';
+import { DistplotChartPlugin } from '@superset-ui/plugin-chart-distplot';
 import WorldMapChartPlugin from '@superset-ui/legacy-plugin-chart-world-map';
 import {
   AreaChartPlugin,
@@ -121,6 +122,7 @@ export default class MainPreset extends Preset {
         }),
         new HeatmapChartPlugin().configure({ key: 'heatmap' }),
         new ScatterPlotPlugin().configure({ key: 'plotly_plot' }),
+        new DistplotChartPlugin().configure({ key: 'plotly_distplot' }),
         new HistogramChartPlugin().configure({ key: 'histogram' }),
         new HorizonChartPlugin().configure({ key: 'horizon' }),
         new LineChartPlugin().configure({ key: 'line' }),
