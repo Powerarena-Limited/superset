@@ -75,22 +75,14 @@ export default function Distplot(props: DistplotProps) {
   const [pieTitle, setPieTitle] = useState(
     'Click to left bar to show Pie Chart',
   );
+  const [distData, setDistData] = useState<Array<any>>([{}]);
   const rootElem = createRef<HTMLDivElement>();
-
-  // Often, you just want to get a hold of the DOM and go nuts.
-  // Here, you can do that with createRef, and the useEffect hook.
-  useEffect(() => {
-    const root = rootElem.current as HTMLElement;
-    console.log('Plugin element', root);
-    let initIndices = Array.from(Array(data.length).keys());
-    setPieChart(initIndices, DIST_X_START.toString(), DIST_X_END.toString());
-  }, [data]);
 
   let targetCycleTime = data[0][TARGET_CYCLE_TIME_COLUMN];
   let cycleTimeList: Array<number> = [];
-  data.forEach(item => {
-    // @ts-ignore
-    let cycleTime: number = item[CYCLE_TIME_COLUMN] < DIST_X_END
+  data.forEach((item: any) => {
+    let cycleTime: number =
+      item[CYCLE_TIME_COLUMN] < DIST_X_END
         ? item[CYCLE_TIME_COLUMN]
         : DIST_X_END - 1;
     cycleTimeList.push(cycleTime);
@@ -108,10 +100,12 @@ export default function Distplot(props: DistplotProps) {
       if (
         currentData[MISSING_ACTIVITY_COLUMN] === MISSING_ACTIVITY_COLUMN_MISSING
       ) {
-        if (currentData[WRONG_SEQUENCE_COLUMN] === WRONG_SEQUENCE_COLUMN_WRONG) {
+        if (
+          currentData[WRONG_SEQUENCE_COLUMN] === WRONG_SEQUENCE_COLUMN_WRONG
+        ) {
           missingPieData[0] = missingPieData[0] + 1; // M + W
           missingPieRawData[0].push(currentData);
-        } else { 
+        } else {
           missingPieData[1] = missingPieData[1] + 1; // M + C
           missingPieRawData[1].push(currentData);
         }
@@ -142,21 +136,14 @@ export default function Distplot(props: DistplotProps) {
 
   console.log('Plugin props', props);
   let parseActivities = (activities: any): any => JSON.parse(activities);
-  let handleOnClick = (event: any) => {
-    let indices: Array<number> = event.points[0].pointIndices;
-    setPieChart(
-      indices,
-      (event.points[0].x - DIST_X_SIZE / 2).toString(),
-      (event.points[0].x + DIST_X_SIZE / 2).toString(),
-    );
-  };
-  let handleOnClickInit = () => {
-    let initIndices = Array.from(Array(data.length).keys());
-    setPieChart(initIndices, DIST_X_START.toString(), DIST_X_END.toString());
-  };
+
+  // let handleOnClickInit = () => {
+  //   let initIndices = Array.from(Array(data.length).keys());
+  //   setPieChart(initIndices, DIST_X_START.toString(), DIST_X_END.toString());
+  // };
 
   let handleOnClickPie = (event: any) => {
-    console.log("136", event);
+    console.log('136', event);
     let label = event.points[0].label;
     if (MISSING_ACTIVITY_COLUMN_M_W === label) {
       setScatterData(currentMissingPieRawData[0]);
@@ -167,9 +154,9 @@ export default function Distplot(props: DistplotProps) {
     } else if (MISSING_ACTIVITY_COLUMN_C_C === label) {
       setScatterData(currentMissingPieRawData[3]);
     }
-  }
+  };
 
-  let testData: Array<any> = [
+  let distChartData: Array<any> = [
     {
       type: 'histogram',
       x: cycleTimeList,
@@ -196,11 +183,66 @@ export default function Distplot(props: DistplotProps) {
       },
     },
   ];
+  let handleOnClick = (event: any) => {
+    console.log('@188', event);
+    let indices: Array<number> = event.points[0].pointIndices;
+    setPieChart(
+      indices,
+      (event.points[0].x - DIST_X_SIZE / 2).toString(),
+      (event.points[0].x + DIST_X_SIZE / 2).toString(),
+    );
+    let updateDistChartData = distChartData;
+    let colros = Array.from(
+      Array((DIST_X_END - DIST_X_START) / DIST_X_SIZE).keys(),
+    ).map((index: number) => {
+      if (index === event.points[0].binNumber) {
+        return 'red';
+      } else {
+        return COLOR_DISTRUBUTION_BAR;
+      }
+    });
+    updateDistChartData[0].marker = { color: colros };
+    setDistData(updateDistChartData);
+  };
+
+  let handleOnHover = (event: any) => {
+    let opacities = Array.from(
+      Array((DIST_X_END - DIST_X_START) / DIST_X_SIZE).keys(),
+    ).map((index: number) => {
+      if (index === event.points[0].binNumber) {
+        return 0.6;
+      } else {
+        return 1;
+      }
+    });
+    let updateDistChartData = distChartData;
+    updateDistChartData[0].marker = {
+      ...distData[0].marker,
+      opacity: opacities,
+    };
+    setDistData(updateDistChartData);
+  };
+
+  let handleOnUnHover = (event: any) => {
+    let updateDistChartData = distChartData;
+    updateDistChartData[0].marker = { ...distData[0].marker, opacity: 1 };
+    setDistData(updateDistChartData);
+  };
+
+  // Often, you just want to get a hold of the DOM and go nuts.
+  // Here, you can do that with createRef, and the useEffect hook.
+  useEffect(() => {
+    const root = rootElem.current as HTMLElement;
+    console.log('Plugin element', root);
+    let initIndices = Array.from(Array(data.length).keys());
+    setPieChart(initIndices, DIST_X_START.toString(), DIST_X_END.toString());
+    setDistData(distChartData);
+  }, [width, height, data]);
 
   let distplotDivStyle = {
     display: 'flex',
     width: width,
-    height: height / 2,
+    height: height * 0.3,
     flex: 3,
   };
 
@@ -210,29 +252,43 @@ export default function Distplot(props: DistplotProps) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flex: 2 }}>
+    <div
+      className="displot"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        flex: 2,
+        width: width,
+        height: height,
+      }}
+    >
       <div style={distplotDivStyle}>
         <div>
           <Plot
             style={distplotStyle}
-            data={testData}
+            data={distData}
             layout={{
               hovermode: 'closest',
               bargap: 0.05,
+              legend: { orientation: 'h' },
+              margin: {
+                l: 50,
+                r: 20,
+                b: 20,
+                t: 50,
+                pad: 4,
+              },
+              autosize: true,
             }}
             onClick={(event: any) => handleOnClick(event)}
+            onHover={(event: any) => handleOnHover(event)}
+            onUnhover={(event: any) => handleOnUnHover(event)}
           />
         </div>
-        <div>
-          <CountBar 
-            width={0.2 * width}
-            height={height / 2}
-            data={scatterData}
-          />
-        </div>
+
         <div style={{ display: 'flex' }}>
           <Pie
-            width={width * 0.2}
+            width={width * 0.35}
             height={height / 2}
             currentMissingPieData={currentMissingPieData}
             currentWaitingPieData={currentWaitingPieData}
@@ -241,10 +297,21 @@ export default function Distplot(props: DistplotProps) {
           />
         </div>
       </div>
-      <div>
-        <ScatterPlot width={width} height={height / 2} data={scatterData} />
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <ScatterPlot
+          width={width * 0.8}
+          height={height * 0.5}
+          data={scatterData}
+        />
+        <div>
+          <CountBar
+            width={0.2 * width}
+            height={height / 2}
+            data={scatterData}
+          />
+        </div>
       </div>
-      <button onClick={() => handleOnClickInit()}>init</button>
+      {/* <button onClick={() => handleOnClickInit()}>init</button> */}
     </div>
   );
 }

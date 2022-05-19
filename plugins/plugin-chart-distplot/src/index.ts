@@ -18,6 +18,8 @@
  */
 // eslint-disable-next-line import/prefer-default-export
 export { default as DistplotChartPlugin  } from './plugin';
+export { ScatterPlotChartPlugin } from './plugin';
+export { PlotlyComparisonChartPlugin } from './plugin';
 /**
  * Note: this file exports the default export from Distplot.tsx.
  * If you want to export multiple visualization modules, you will need to

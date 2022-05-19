@@ -17,7 +17,7 @@ import { CountBarProps } from './types';
 export default function CountBar(props: CountBarProps) {
   const { data, width, height } = props;
 
-//   const [counts, setCounts] = useState<Array<any>>();
+  //   const [counts, setCounts] = useState<Array<any>>();
   let sopData = JSON.parse(data[0][SOP_DATA_COLUMN]);
   let steps: Array<any> = [];
   let lean: Array<string> = [];
@@ -46,20 +46,20 @@ export default function CountBar(props: CountBarProps) {
   let generateCounts = (data: any) => {
     let counts: Array<any> = [];
     for (let i = 0; i < steps.length; i++) {
-        counts.push(0);
+      counts.push(0);
     }
 
     for (let i = 0; i < data.length; i++) {
       let sopData = JSON.parse(data[i][SOP_DATA_COLUMN]);
       let keys = Object.keys(sopData);
       for (let i = 0; i < keys.length; i++) {
-          if (-1 === (sopData[keys[i]][SOP_DATA_COLUMN_EVENT_TS])) {
-            counts[i] = counts[i] + 1;
-          }
+        if (-1 === sopData[keys[i]][SOP_DATA_COLUMN_EVENT_TS]) {
+          counts[i] = counts[i] + 1;
+        }
       }
     }
     return counts;
-  }
+  };
 
   return (
     <Plot
@@ -81,6 +81,14 @@ export default function CountBar(props: CountBarProps) {
         hovermode: 'closest',
         showlegend: false,
         title: 'Missing Activities Counts',
+        margin: {
+          l: 150,
+          r: 20,
+          b: 50,
+          t: 50,
+          pad: 4,
+        },
+        autosize: true,
       }}
     />
   );

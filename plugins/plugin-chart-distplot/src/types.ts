@@ -40,5 +40,7 @@ export type DistplotProps = DistplotStylesProps &
   };
 
 export type PieProps = any;
+export type SopPieProps = any;
 export type ScatterPlotProps = any;
 export type CountBarProps = any;
+export type StackBarProps = any;

@@ -31,7 +31,6 @@ import {
   SOP_DATA_COLUMN_TARGET,
   TARGET_CYCLE_TIME_COLUMN,
   CYCLE_TIME_COLUMN,
-  WORKSTATION_COLUMN,
   SOP_DATA_COLUMN_KEY_PREFIX,
   COLOR_VA,
   COLOR_NVA,
@@ -39,6 +38,7 @@ import {
   COLOR_CYCLE_TIME,
   COLOR_GT_TARGET,
   COLOR_LT_TARGET,
+  COLOR_SOP_WAITING_STEP_WAITING,
 } from './constants';
 
 // The following Styles component is a <div> element, which has been styled using Emotion
@@ -84,11 +84,16 @@ export default function ScatterPlot(props: ScatterPlotProps) {
   let steps: Array<any> = [];
   let lean: Array<string> = [];
   let targetTime: Array<any> = [];
-  Object.keys(sopData).map((key: any) => {
-        steps.unshift(sopData[key][SOP_DATA_COLUMN_NAME]);
-        lean.unshift(sopData[key][SOP_DATA_COLUMN_LEAN]);
-        targetTime.unshift(sopData[key][SOP_DATA_COLUMN_TARGET]);
-      });
+  Object.keys(sopData).map((key: any, index: number) => {
+    steps.unshift(sopData[key][SOP_DATA_COLUMN_NAME]);
+    if (index === 0) {
+      // first step always waiting step
+      lean.unshift('WAITING');
+    } else {
+      lean.unshift(sopData[key][SOP_DATA_COLUMN_LEAN]);
+    }
+    targetTime.unshift(sopData[key][SOP_DATA_COLUMN_TARGET]);
+  });
   let generateColors = (data: any, stringColorMap: any): Array<any> => {
     let listColor: Array<any> = [];
     if (data) {
@@ -102,6 +107,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
   lean.push(CYCLE_TIME_COLUMN);
   targetTime.push(data[0][TARGET_CYCLE_TIME_COLUMN]);
   let colors = generateColors(lean, {
+    WAITING: COLOR_SOP_WAITING_STEP_WAITING,
     VA: COLOR_VA,
     RNVA: COLOR_RNVA,
     NVA: COLOR_NVA,
@@ -152,12 +158,16 @@ export default function ScatterPlot(props: ScatterPlotProps) {
     showlegend: boolean,
     name = 'activity',
     symbol = 'circle',
+    line_width = 0.3,
     type = 'scatter',
     mode = 'markers',
     marker = {
       color: color,
       symbol: symbol,
       size: size,
+      line: {
+        width: line_width,
+      },
     },
   ): any => {
     return {
@@ -213,12 +223,8 @@ export default function ScatterPlot(props: ScatterPlotProps) {
 
     let averageData = JSON.parse(JSON.stringify(data[0]));
     let medianData = JSON.parse(JSON.stringify(data[0]));
-    averageData[SOP_DATA_COLUMN] = JSON.parse(
-      averageData[SOP_DATA_COLUMN],
-    );
-    medianData[SOP_DATA_COLUMN] = JSON.parse(
-      medianData[SOP_DATA_COLUMN],
-    );
+    averageData[SOP_DATA_COLUMN] = JSON.parse(averageData[SOP_DATA_COLUMN]);
+    medianData[SOP_DATA_COLUMN] = JSON.parse(medianData[SOP_DATA_COLUMN]);
     for (let i = 0; i < steps.length; i++) {
       let averageValue = average(perSopDatalist[steps[i]]);
       let medianValue = median(perSopDatalist[steps[i]]);
@@ -236,32 +242,39 @@ export default function ScatterPlot(props: ScatterPlotProps) {
       averageList,
       steps,
       averageData,
-      'red',
-      10,
+      '#804D28',
+      16,
       true,
       'average',
+      '142',
+      3,
     );
     let medianTrace = generateTrace(
       medianList,
       steps,
       medianData,
-      'yellow',
-      10,
+      '#525252',
+      16,
       true,
       'median',
+      '142',
+      3,
     );
     let targetCycleTimeTrace = generateTrace(
       targetTime,
       steps,
       targetTime,
-      'green',
-      10,
+      '#F7C153',
+      16,
       true,
       'target time',
+      '142',
+      3,
     );
     dataPlots.push(averageTrace);
     dataPlots.push(medianTrace);
     dataPlots.push(targetCycleTimeTrace);
+    console.log("@277", dataPlots);
     return dataPlots;
   };
 
@@ -275,15 +288,15 @@ export default function ScatterPlot(props: ScatterPlotProps) {
         setCurrentScatterData(data.record);
         let oneCycleData = generateOneCycleData(data.record);
         let sopTargetTrace = {
-          x: oneCycleData.target.slice(0, -1),
-          y: steps,
+          y: oneCycleData.target.slice(0, -1),
+          x: steps,
           name: 'target',
           type: 'bar',
           marker: {
-            color: colors
+            color: colors,
           },
           text: oneCycleData.target,
-          orientation: 'h',
+          // orientation: 'h',
         };
         let sopValueSubTarget: Array<any> = [];
         let sopValueSubColors: Array<string> = [];
@@ -299,15 +312,15 @@ export default function ScatterPlot(props: ScatterPlotProps) {
           }
         }
         let sopValueSubTargetDataTrace = {
-          x: sopValueSubTarget,
-          y: steps,
+          y: sopValueSubTarget,
+          x: steps,
           name: 'target',
           type: 'bar',
           marker: {
             color: sopValueSubColors,
           },
           text: fixedSopValues,
-          orientation: 'h',
+          orientation: 'v',
           textposition: 'auto',
         };
         setSopWithTargetData([sopTargetTrace, sopValueSubTargetDataTrace]);
@@ -324,6 +337,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
   };
   let plotStyle = {
     width: width * 0.6,
+    height: height,
   };
 
   return (
@@ -331,27 +345,54 @@ export default function ScatterPlot(props: ScatterPlotProps) {
       <Plot
         style={plotStyle}
         data={generateTraces(data, steps)}
-        layout={{ hovermode: 'closest' }}
+        layout={{
+          hovermode: 'closest',
+          legend: { orientation: 'h' },
+          margin: {
+            l: 50,
+            r: 20,
+            b: 50,
+            t: 50,
+            pad: 4,
+          },
+          autosize: true,
+        }}
         // onHover={ event => handleClickHover(event) }
         onClick={(event: any) => handleClickHover(event)}
       />
       <div style={{ justifyContent: 'center' }}>
         {showCurrentCycle && oneCycleData.values ? (
-          <div className="current-cycle">
+          <div
+            className="current-cycle"
+            style={{ display: 'flex', flexDirection: 'column' }}
+          >
             <Plot
-              style={{width: 0.4 * width, height: 0.8 * height}}
+              style={{ width: 0.4 * width, height: 0.9 * height }}
               data={sopWithTargetData}
               layout={{
                 barmode: 'stack',
                 hovermode: 'closest',
                 showlegend: false,
                 title:
-                  CYCLE_TIME_COLUMN + ': ' +
+                  CYCLE_TIME_COLUMN +
+                  ': ' +
                   oneCycleData.values[oneCycleData.values.length - 1],
+                margin: {
+                  l: 50,
+                  r: 20,
+                  b: 50,
+                  t: 50,
+                  pad: 4,
+                },
+                autosize: true,
               }}
             />
             <button
-              style={{ justifyContent: 'center', alignItems: 'center' }}
+              style={{
+                alignSelf: 'flex-end',
+                backgroundColor: 'white',
+                border: '2px solid #4CAF50',
+              }}
               onClick={() => {
                 videoPlaybak(currentScatterData);
               }}
@@ -377,12 +418,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
 
 let videoPlaybak = (data: any) => {
   console.log('@video playbak', data);
-  alert(
-    'Workstation: ' +
-      data[WORKSTATION_COLUMN] +
-      '\nDate: ' +
-      data[EVENT_TS_COLUMN] +
-      '\nCycle Time: ' +
-      data[CYCLE_TIME_COLUMN],
-  );
+  let url =
+    'https://manage-sales-demo.standalone.powerarena.com:10443/admin/mark-for-reason/?tab=single-view&entity_code=demo_demo_line_cam_007&pos=267&start_ts=1651623239000&end_ts=1651623389000&alert_type=1';
+  window.open(url, '_blank')?.focus();
 };
