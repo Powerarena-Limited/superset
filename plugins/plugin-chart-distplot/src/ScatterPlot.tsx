@@ -64,18 +64,11 @@ export default function ScatterPlot(props: ScatterPlotProps) {
   const [sopWithTargetData, setSopWithTargetData] = useState<Array<any>>([]);
   const [showCurrentCycle, setShowCurrentCycle] = useState(false);
   const [currentScatterData, setCurrentScatterData] = useState<any | any>([]);
+  const [scatterPlotData, setScatterPlotData] = useState<any>({});
   data.sort((a: any, b: any, key = EVENT_TS_COLUMN) => {
     if (a[key] > b[key]) return 1;
     if (a[key] < b[key]) return -1;
     return 0;
-  });
-  const rootElem = createRef<HTMLDivElement>();
-
-  // Often, you just want to get a hold of the DOM and go nuts.
-  // Here, you can do that with createRef, and the useEffect hook.
-  useEffect(() => {
-    const root = rootElem.current as HTMLElement;
-    console.log('Plugin element', root);
   });
 
   // Init from first data.
@@ -156,7 +149,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
     color: any,
     size: number,
     showlegend: boolean,
-    name = 'activity',
+    name = '',
     symbol = 'circle',
     line_width = 0.3,
     type = 'scatter',
@@ -165,6 +158,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
       color: color,
       symbol: symbol,
       size: size,
+      opacity: 0.8,
       line: {
         width: line_width,
       },
@@ -274,11 +268,36 @@ export default function ScatterPlot(props: ScatterPlotProps) {
     dataPlots.push(averageTrace);
     dataPlots.push(medianTrace);
     dataPlots.push(targetCycleTimeTrace);
-    console.log("@277", dataPlots);
     return dataPlots;
   };
 
-  let handleClickHover = (event: any): void => {
+  let scatterPlotChartData: any = generateTraces(data, steps);
+
+  // const rootElem = createRef<HTMLDivElement>();
+  // Often, you just want to get a hold of the DOM and go nuts.
+  // Here, you can do that with createRef, and the useEffect hook.
+  useEffect(() => {
+    // const root = rootElem.current as HTMLElement;
+    // console.log('Plugin element', root);
+    setScatterPlotData(scatterPlotChartData);
+  }, [data]);
+
+  let handleOnClick = (event: any): void => {
+    console.log('@281', event);
+    scatterPlotChartData.push({
+      ...scatterPlotChartData[event.points[0].curveNumber],
+      showlegend: true,
+      symbol: '142',
+      marker: {
+        color: 'red',
+        size: 16,
+        opacity: 1,
+        line: {
+          width: 0.3,
+        },
+      },
+    });
+    setScatterPlotData(scatterPlotChartData);
     if (CYCLE_TIME_COLUMN === event.points[0].y.toString()) {
       setShowCurrentCycle(true);
       let data = event.points[0].data;
@@ -336,7 +355,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
     flex: 2,
   };
   let plotStyle = {
-    width: width * 0.6,
+    width: width,
     height: height,
   };
 
@@ -344,7 +363,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
     <div style={scatterPlotStyle}>
       <Plot
         style={plotStyle}
-        data={generateTraces(data, steps)}
+        data={scatterPlotData}
         layout={{
           hovermode: 'closest',
           legend: { orientation: 'h' },
@@ -357,8 +376,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
           },
           autosize: true,
         }}
-        // onHover={ event => handleClickHover(event) }
-        onClick={(event: any) => handleClickHover(event)}
+        onClick={(event: any) => handleOnClick(event)}
       />
       <div style={{ justifyContent: 'center' }}>
         {showCurrentCycle && oneCycleData.values ? (
@@ -367,7 +385,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
             style={{ display: 'flex', flexDirection: 'column' }}
           >
             <Plot
-              style={{ width: 0.4 * width, height: 0.9 * height }}
+              style={{ width: 0 * width, height: 1 * height }}
               data={sopWithTargetData}
               layout={{
                 barmode: 'stack',
