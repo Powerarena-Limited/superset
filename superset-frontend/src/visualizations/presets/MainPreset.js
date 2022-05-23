@@ -39,8 +39,11 @@ import SunburstChartPlugin from '@superset-ui/legacy-plugin-chart-sunburst';
 import TableChartPlugin from '@superset-ui/plugin-chart-table';
 import TreemapChartPlugin from '@superset-ui/legacy-plugin-chart-treemap';
 import { WordCloudChartPlugin } from '@superset-ui/plugin-chart-word-cloud';
-import { ScatterPlotPlugin } from '@superset-ui/plugin-chart-hello-world';
-import { DistplotChartPlugin } from '@superset-ui/plugin-chart-distplot';
+import {
+  ScatterPlotChartPlugin,
+  PlotlyComparisonChartPlugin,
+  DistplotChartPlugin,
+} from '@superset-ui/plugin-chart-distplot';
 import WorldMapChartPlugin from '@superset-ui/legacy-plugin-chart-world-map';
 import {
   AreaChartPlugin,
@@ -121,8 +124,11 @@ export default class MainPreset extends Preset {
           key: 'mixed_timeseries',
         }),
         new HeatmapChartPlugin().configure({ key: 'heatmap' }),
-        new ScatterPlotPlugin().configure({ key: 'plotly_plot' }),
+        new ScatterPlotChartPlugin().configure({ key: 'plotly_plot' }),
         new DistplotChartPlugin().configure({ key: 'plotly_distplot' }),
+        new PlotlyComparisonChartPlugin().configure({
+          key: 'plotly_comparison',
+        }),
         new HistogramChartPlugin().configure({ key: 'histogram' }),
         new HorizonChartPlugin().configure({ key: 'horizon' }),
         new LineChartPlugin().configure({ key: 'line' }),
