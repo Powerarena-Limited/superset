@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Plot from 'react-plotly.js';
 import {
   COLOR_MISSING_ACTIVITY_COLUMN_C_C,
@@ -54,7 +54,7 @@ export function Pie(props: PieProps) {
   const [selected, setSelected] = useState(-1);
 
   // init component state when new data arrived.
-  useEffect(() => {
+  useMemo(() => {
     setMissingColors(missingActivityColors);
     setSelected(-1);
   }, [pieTitle, currentMissingPieData, currentWaitingPieData]);
@@ -72,8 +72,13 @@ export function Pie(props: PieProps) {
     }
   };
   let handleOnUnHover = (event: any) => {
-    setMissingWidth(missingActivityWidth);
-    setSOPWaitingWidth(initSopWaitingWidth);
+    let label = event.points[0].label;
+    let pos = missingActivityLabels.indexOf(label);
+    if (pos === -1) {
+      setSOPWaitingWidth(initSopWaitingWidth);
+    } else {
+      setMissingWidth(missingActivityWidth);
+    }
   };
   return (
     <Plot
@@ -83,7 +88,6 @@ export function Pie(props: PieProps) {
         let pos = missingActivityLabels.indexOf(label);
         if (selected === pos) {
           setMissingColors(missingActivityColors);
-          setMissingWidth(missingActivityWidth);
           setSelected(-1);
         } else {
           missingActivityColors[pos] = 'red';

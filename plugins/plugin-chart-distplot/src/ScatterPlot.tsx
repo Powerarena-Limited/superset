@@ -18,7 +18,7 @@
  */
 
 import Plot from 'react-plotly.js';
-import React, { useEffect, createRef, useState } from 'react';
+import React, { useEffect, createRef, useState, useMemo } from 'react';
 import { ScatterPlotProps } from './types';
 import {
   EVENT_TS_COLUMN,
@@ -276,7 +276,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
   // const rootElem = createRef<HTMLDivElement>();
   // Often, you just want to get a hold of the DOM and go nuts.
   // Here, you can do that with createRef, and the useEffect hook.
-  useEffect(() => {
+  useMemo(() => {
     // const root = rootElem.current as HTMLElement;
     // console.log('Plugin element', root);
     setScatterPlotData(scatterPlotChartData);
@@ -378,7 +378,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
         }}
         onClick={(event: any) => handleOnClick(event)}
       />
-      <div style={{ justifyContent: 'center' }}>
+      {/* <div style={{ justifyContent: 'center' }}>
         {showCurrentCycle && oneCycleData.values ? (
           <div
             className="current-cycle"
@@ -429,7 +429,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
             <h3> Click Cycle Time Plot To Show More Info. </h3>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }

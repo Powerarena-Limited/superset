@@ -17,7 +17,7 @@
  * under the License.
  */
 import Plot from 'react-plotly.js';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { DistplotProps } from './types';
 import {
   COLOR_DISTRUBUTION_BAR,
@@ -243,7 +243,7 @@ updateDistChartData[0].marker = { ...distData[0].marker, line: { width: 0.1 } };
   // const rootElem = createRef<HTMLDivElement>();
   // Often, you just want to get a hold of the DOM and go nuts.
   // Here, you can do that with createRef, and the useEffect hook.
-  useEffect(() => {
+  useMemo(() => {
     // const root = rootElem.current as HTMLElement;
     // console.log('Plugin element', root);
     let initIndices = Array.from(Array(data.length).keys());

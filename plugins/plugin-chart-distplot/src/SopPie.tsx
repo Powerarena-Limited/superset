@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Plot from 'react-plotly.js';
 import {
   COLOR_MISSING_ACTIVITY_COLUMN_C_C,
@@ -44,21 +44,43 @@ export function SopPie(props: SopPieProps) {
     return missingPieData;
   };
 
+  let missingActivityLabels = [
+    MISSING_ACTIVITY_COLUMN_M_W,
+    MISSING_ACTIVITY_COLUMN_M_C,
+    MISSING_ACTIVITY_COLUMN_C_W,
+    MISSING_ACTIVITY_COLUMN_C_C,
+  ];
+  let missingActivityWidth: Array<number> = [0.1, 0.1, 0.1, 0.1];
+  const [missingWidth, setMissingWidth] = useState<Array<number>>([0]);
+
+  let handleOnHover = (event: any) => {
+    let label = event.points[0].label;
+    let pos = missingActivityLabels.indexOf(label);
+    missingActivityWidth[pos] = 3;
+    setMissingWidth(missingActivityWidth);
+  };
+
+  let handleOnUnHover = (event: any) => {
+    let label = event.points[0].label;
+    let pos = missingActivityLabels.indexOf(label);
+    missingActivityWidth[pos] = 0.1;
+    setMissingWidth(missingActivityWidth);
+  };
+
+  useMemo(() => {}, [missingWidth]);
+
   return (
-    <div style={{ width: width, height: height}}>
+    <div style={{ width: width, height: height }}>
       <Plot
         style={{ width: width, height: height }}
         onClick={event => handleOnClick(event)}
+        onHover={event => handleOnHover(event)}
+        onUnhover={event => handleOnUnHover(event)}
         data={[
           {
             name: MISSING_ACTIVITY_COLUMN_MISSING,
             values: setPieChart(),
-            labels: [
-              MISSING_ACTIVITY_COLUMN_M_W,
-              MISSING_ACTIVITY_COLUMN_M_C,
-              MISSING_ACTIVITY_COLUMN_C_W,
-              MISSING_ACTIVITY_COLUMN_C_C,
-            ],
+            labels: missingActivityLabels,
             marker: {
               colors: [
                 COLOR_MISSING_ACTIVITY_COLUMN_M_W,
@@ -66,6 +88,10 @@ export function SopPie(props: SopPieProps) {
                 COLOR_MISSING_ACTIVITY_COLUMN_C_W,
                 COLOR_MISSING_ACTIVITY_COLUMN_C_C,
               ],
+              line: {
+                width: missingWidth,
+                color: COLOR_MISSING_ACTIVITY_COLUMN_C_W,
+              },
             },
             type: 'pie',
             domain: {
