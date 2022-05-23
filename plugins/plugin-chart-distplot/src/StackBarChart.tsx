@@ -9,14 +9,13 @@ import {
   SOP_WAITING_STEP,
   WAITING_TIME,
   WAITING_TIME_WORKING,
-  WORKSTATION_COLUMN,
 } from './constants';
 import CountBar from './CountBar';
 import { SopPie } from './SopPie';
 import { StackBarProps } from './types';
 
 export default function StackBarChart(props: StackBarProps) {
-  const { data, width, height } = props;
+  const { data, width, height, barColumn } = props;
 
   let getValueIndexFromArray = (array: Array<any>, value: any): number => {
     let index = -1;
@@ -32,7 +31,7 @@ export default function StackBarChart(props: StackBarProps) {
     let x: Array<string> = [];
     for (let i = 0; i < data.length; i++) {
       if (getValueIndexFromArray(x, data[i][column_name]) === -1) {
-        x.push(data[i][WORKSTATION_COLUMN]);
+        x.push(data[i][barColumn]);
       }
     }
     return x;
@@ -75,8 +74,8 @@ export default function StackBarChart(props: StackBarProps) {
     };
   };
 
-  let x: Array<string> = listX(data, WORKSTATION_COLUMN);
-  let stackBarChartData = listWaiting(data, WORKSTATION_COLUMN, x);
+  let x: Array<string> = listX(data, barColumn);
+  let stackBarChartData = listWaiting(data, barColumn, x);
   console.log('@101', stackBarChartData);
   let dataFilteredByXAxis: Array<any> = stackBarChartData.dataFilteredByXAxis; // list data grouped by x axis
   let generateData = (): any => {

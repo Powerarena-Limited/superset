@@ -5,6 +5,7 @@ export const IDLE_TIME = 'Idle Time';
 export const CHART_CLASS = '.displot';
 export const CURRENT_CYCLE_CLASS = '.current-cycle';
 export const WORKSTATION_COLUMN = 'workstation_name';
+export const QPL_COLUMN = 'qpl';
 export const CYCLE_TIME_COLUMN = 'cycle_time';
 export const WRONG_SEQUENCE_COLUMN = 'wrong_sequence';
 export const WRONG_SEQUENCE_COLUMN_WRONG = 'wrong';
