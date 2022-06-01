@@ -20,70 +20,72 @@
 ######################################################################
 ARG PY_VER=3.8.12
 
-# FROM python:${PY_VER} AS superset-py
-# ENV HTTP_PROXY=http://192.168.0.117:8118
-# ENV HTTPS_PROXY=http://192.168.0.117:8118
-# ENV http_proxy=http://192.168.0.117:8118
-# ENV https_proxy=http://192.168.0.117:8118
-# RUN mkdir /app \
-#         && apt-get update -y \
-#         && apt-get install -y --no-install-recommends \
-#             build-essential \
-#             default-libmysqlclient-dev \
-#             libpq-dev \
-#             libsasl2-dev \
-#             libecpg-dev \
-#         && rm -rf /var/lib/apt/lists/*
+FROM python:${PY_VER} AS superset-py
+ENV HTTP_PROXY=http://192.168.0.117:8118
+ENV HTTPS_PROXY=http://192.168.0.117:8118
+ENV http_proxy=http://192.168.0.117:8118
+ENV https_proxy=http://192.168.0.117:8118
+RUN mkdir /app \
+        && apt-get update -y \
+        && apt-get install -y --no-install-recommends \
+            build-essential \
+            default-libmysqlclient-dev \
+            libpq-dev \
+            libsasl2-dev \
+            libecpg-dev \
+        && rm -rf /var/lib/apt/lists/*
 
-# # First, we just wanna install requirements, which will allow us to utilize the cache
-# # in order to only build if and only if requirements change
-# COPY ./requirements/*.txt  /app/requirements/
-# COPY setup.py MANIFEST.in README.md /app/
-# COPY superset-frontend/package.json /app/superset-frontend/
+# First, we just wanna install requirements, which will allow us to utilize the cache
+# in order to only build if and only if requirements change
+COPY ./requirements/*.txt  /app/requirements/
+COPY setup.py MANIFEST.in README.md /app/
+COPY superset-frontend/package.json /app/superset-frontend/
 
-# RUN cd /app \
-#     && mkdir -p superset/static \
-#     && touch superset/static/version_info.json \
-#     && pip install --no-cache -r requirements/local.txt
-# ENV HTTP_PROXY=""
-# ENV HTTPS_PROXY=""
-# ENV http_proxy=
-# ENV https_proxy=
+RUN cd /app \
+    && mkdir -p superset/static \
+    && touch superset/static/version_info.json \
+    && pip install --no-cache -r requirements/local.txt
+RUN pip install elasticsearch-dbapi
+RUN pip install --no-cache gevent psycopg2 redis
+ENV HTTP_PROXY=""
+ENV HTTPS_PROXY=""
+ENV http_proxy=
+ENV https_proxy=
 
 ######################################################################
 # Node stage to deal with static asset construction
 ######################################################################
-# FROM node:16 AS superset-node
+FROM node:16 AS superset-node
 
-# ARG NPM_VER=7
-# RUN npm install -g npm@${NPM_VER}
-
-
-# ARG NPM_BUILD_CMD="build"
-# ENV BUILD_CMD=${NPM_BUILD_CMD}
-
-# # NPM ci first, as to NOT invalidate previous steps except for when package.json changes
-# RUN mkdir -p /app/superset-frontend
-# RUN mkdir -p /app/superset/assets
-# COPY ./docker/frontend-mem-nag.sh /
-# COPY ./superset-frontend/package* /app/superset-frontend/
-# COPY ./superset-frontend/package_no_plugin.json /app/superset-frontend/package.json
-# COPY ./ superset-frontend/node_modules.zip /app/superset-frontend/
-# RUN cd /app/superset-frontend && unzip node_modules.zip
-# RUN /frontend-mem-nag.sh \
-#         && cd /app/superset-frontend \
-#         && npm ci
-# COPY ./superset-ui /app/superset-ui
-# RUN cd /app/superset-ui && npm i
+ARG NPM_VER=7
+RUN npm install -g npm@${NPM_VER}
 
 
-FROM registry.gitlab.motherapp.com/powerarena/powerarena-superset-node:0.3 AS superset-node-plugin
+ARG NPM_BUILD_CMD="build"
+ENV BUILD_CMD=${NPM_BUILD_CMD}
+
+# NPM ci first, as to NOT invalidate previous steps except for when package.json changes
+RUN mkdir -p /app/superset-frontend
+RUN mkdir -p /app/superset/assets
+COPY ./docker/frontend-mem-nag.sh /
+COPY ./superset-frontend/package* /app/superset-frontend/
+COPY ./superset-frontend/package_no_plugin.json /app/superset-frontend/package.json
+COPY ./ superset-frontend/node_modules.zip /app/superset-frontend/
+RUN cd /app/superset-frontend && unzip node_modules.zip
+RUN /frontend-mem-nag.sh \
+        && cd /app/superset-frontend \
+        && npm ci
+COPY ./superset-ui /app/superset-ui
+RUN cd /app/superset-ui && npm i --force
+
+
+FROM superset-node AS superset-node-plugin
 RUN npm config set registry https://registry.npm.taobao.org
 # Next, copy in the rest and let webpack do its thing
 # RUN npm i --save plotyl.js react-plotly.js @types/react-plotly.js
 COPY ./superset-frontend /app/superset-frontend
 COPY ./superset-ui /app/superset-ui
-RUN cd /app/superset-frontend && npm link ../superset-ui/plugins/plugin-chart-hello-world
+RUN cd /app/superset-frontend && npm link ../superset-ui/plugins/plugin-chart-hello-world ../superset-ui/plugins/plugin-chart-distplot
 COPY ./superset-frontend/package.json /app/superset-frontend/package.json
 RUN cat /app/superset-frontend/package.json
 # This seems to be the most expensive step
@@ -131,9 +133,9 @@ RUN export CHROMEDRIVER_VERSION=$(curl --silent https://chromedriver.storage.goo
     rm -f chromedriver_linux64.zip
 RUN apt-get install fonts-arphic-ukai fonts-arphic-uming fonts-ipafont-mincho fonts-ipafont-gothic fonts-unfonts-core
 
-COPY --from=registry.gitlab.motherapp.com/powerarena/powerarena-superset/superset-py:0.3 /usr/local/lib/python3.8/site-packages/ /usr/local/lib/python3.8/site-packages/
+COPY --from=superset-py /usr/local/lib/python3.8/site-packages/ /usr/local/lib/python3.8/site-packages/
 # Copying site-packages doesn't move the CLIs, so let's copy them one by one
-COPY --from=registry.gitlab.motherapp.com/powerarena/powerarena-superset/superset-py:0.3 /usr/local/bin/gunicorn /usr/local/bin/celery /usr/local/bin/flask /usr/bin/
+COPY --from=superset-py /usr/local/bin/gunicorn /usr/local/bin/celery /usr/local/bin/flask /usr/bin/
 COPY --from=superset-node-plugin /app/superset/static/assets /app/superset/static/assets
 COPY --from=superset-node-plugin /app/superset-frontend /app/superset-frontend
 COPY ./superset_config.bak.py /app/pythonpath/superset_config.py
