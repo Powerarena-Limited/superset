@@ -17,7 +17,7 @@ import {
 import { SopPieProps } from './types';
 
 export function SopPie(props: SopPieProps) {
-  const { width, height, data, title, handleOnClick } = props;
+  const { width, height, data, showlegend, title, handleOnClick } = props;
 
   let setPieChart = () => {
     let missingPieData: Array<number> = [0, 0, 0, 0];
@@ -104,12 +104,18 @@ export function SopPie(props: SopPieProps) {
         layout={{
           hovermode: 'closest',
           grid: { rows: 1, columns: 1 },
-          showlegend: true,
+          showlegend: showlegend,
+          legend: {
+            traceorder: 'normal',
+            font: {
+              size: 8,
+            },
+          },
           title: title,
           autosize: true,
           margin: {
-            l: 20,
-            r: 20,
+            l: 50,
+            r: 50,
             b: 20,
             t: 20,
             pad: 4,

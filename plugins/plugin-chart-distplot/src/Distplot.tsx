@@ -17,7 +17,7 @@
  * under the License.
  */
 import Plot from 'react-plotly.js';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { DistplotProps } from './types';
 import {
   COLOR_DISTRUBUTION_BAR,
@@ -140,7 +140,7 @@ export default function Distplot(props: DistplotProps) {
   let parseActivities = (activities: any): any => JSON.parse(activities);
   let handleOnClickPie = (event: any) => {
     let label = event.points[0].label;
-    console.log("@142", selectedPie, label);
+    console.log('@142', selectedPie, label);
     if (selectedPie === label) {
       setScatterData(scatterRawData);
       setSelectedPie('');
@@ -229,14 +229,17 @@ export default function Distplot(props: DistplotProps) {
       line: {
         width: width,
         color: '#2B7EF5',
-      }
+      },
     };
     setDistData(updateDistChartData);
   };
 
   let handleOnUnHover = (event: any) => {
     let updateDistChartData = distChartData;
-updateDistChartData[0].marker = { ...distData[0].marker, line: { width: 0.1 } };
+    updateDistChartData[0].marker = {
+      ...distData[0].marker,
+      line: { width: 0.1 },
+    };
     setDistData(updateDistChartData);
   };
 
@@ -265,6 +268,37 @@ updateDistChartData[0].marker = { ...distData[0].marker, line: { width: 0.1 } };
     height: height / 2,
   };
 
+  // let tableData: any = [
+  //   {
+  //     type: 'table',
+  //     header: {
+  //       values: [
+  //         ['<b>CT Event Ratio</b>'],
+  //         ['<b>COUNT</b>'],
+  //         ['<b>TTL MISING</b>'],
+  //         ['<b>TTL WRONG</b>'],
+  //         ['<b>Mean CT</b>'],
+  //       ],
+  //       align: 'center',
+  //       line: { width: 1, color: 'black' },
+  //       fill: { color: 'white' },
+  //       font: { family: 'Arial', size: 15, color: 'Black' },
+  //     },
+  //     cells: {
+  //       values: [
+  //         [0],
+  //         [0],
+  //         [0],
+  //         [0],
+  //         [0],
+  //       ],
+  //       align: 'center',
+  //       line: { color: 'black', width: 1 },
+  //       font: { family: 'Arial', size: 14, color: ['black'] },
+  //     },
+  //   },
+  // ];
+
   return (
     <div
       className="displot"
@@ -276,6 +310,26 @@ updateDistChartData[0].marker = { ...distData[0].marker, line: { width: 0.1 } };
         height: height,
       }}
     >
+      {/* <div
+        style={{
+          width: width,
+        }}
+      >
+        <Plot
+          style={{ width: width, height: 0.1 * height }}
+          data={tableData}
+          layout={{
+            margin: {
+              l: 50,
+              r: 50,
+              b: 0,
+              t: 0,
+              pad: 4,
+            },
+            autosize: true,
+          }}
+        /> */}
+      {/* </div> */}
       <div style={distplotDivStyle}>
         <div>
           <Plot
@@ -303,7 +357,7 @@ updateDistChartData[0].marker = { ...distData[0].marker, line: { width: 0.1 } };
         <div style={{ display: 'flex' }}>
           <Pie
             width={width * 0.38}
-            height={height / 2}
+            height={height * 0.5}
             currentMissingPieData={currentMissingPieData}
             currentWaitingPieData={currentWaitingPieData}
             pieTitle={pieTitle}

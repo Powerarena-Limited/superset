@@ -10,7 +10,7 @@ export default function ComparisonChart(props: StackBarProps) {
     const root = rootElem.current as HTMLElement;
     console.log('Plugin element', root);
   }, [data]);
-  console.log("@13", metrics)
+  
   return (
     <div style={{ width: width, height: height }}>
       <StackBarChart width={width} height={height} data={data} barColumn={metrics[0].column.column_name} />

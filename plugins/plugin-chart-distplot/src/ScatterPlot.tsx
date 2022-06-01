@@ -18,7 +18,7 @@
  */
 
 import Plot from 'react-plotly.js';
-import React, { useEffect, createRef, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ScatterPlotProps } from './types';
 import {
   EVENT_TS_COLUMN,
@@ -36,8 +36,8 @@ import {
   COLOR_NVA,
   COLOR_RNVA,
   COLOR_CYCLE_TIME,
-  COLOR_GT_TARGET,
-  COLOR_LT_TARGET,
+  // COLOR_GT_TARGET,
+  // COLOR_LT_TARGET,
   COLOR_SOP_WAITING_STEP_WAITING,
 } from './constants';
 
@@ -60,10 +60,10 @@ export default function ScatterPlot(props: ScatterPlotProps) {
   // height and width are the height and width of the DOM element as it exists in the dashboard.
   // There is also a `data` prop, which is, of course, your DATA 🎉
   const { data, height, width } = props;
-  const [oneCycleData, setOneCycleData] = useState<any | any>({});
-  const [sopWithTargetData, setSopWithTargetData] = useState<Array<any>>([]);
-  const [showCurrentCycle, setShowCurrentCycle] = useState(false);
-  const [currentScatterData, setCurrentScatterData] = useState<any | any>([]);
+  // const [oneCycleData, setOneCycleData] = useState<any | any>({});
+  // const [sopWithTargetData, setSopWithTargetData] = useState<Array<any>>([]);
+  // const [showCurrentCycle, setShowCurrentCycle] = useState(false);
+  // const [currentScatterData, setCurrentScatterData] = useState<any | any>([]);
   const [scatterPlotData, setScatterPlotData] = useState<any>({});
   data.sort((a: any, b: any, key = EVENT_TS_COLUMN) => {
     if (a[key] > b[key]) return 1;
@@ -298,54 +298,53 @@ export default function ScatterPlot(props: ScatterPlotProps) {
       },
     });
     setScatterPlotData(scatterPlotChartData);
-    if (CYCLE_TIME_COLUMN === event.points[0].y.toString()) {
-      setShowCurrentCycle(true);
-      let data = event.points[0].data;
-      if ('object' === typeof data.record[SOP_DATA_COLUMN]) {
-        console.log("@180 it's already an Object., It's not a Cycle Data");
-      } else {
-        setCurrentScatterData(data.record);
-        let oneCycleData = generateOneCycleData(data.record);
-        let sopTargetTrace = {
-          y: oneCycleData.target.slice(0, -1),
-          x: steps,
-          name: 'target',
-          type: 'bar',
-          marker: {
-            color: colors,
-          },
-          text: oneCycleData.target,
-          // orientation: 'h',
-        };
-        let sopValueSubTarget: Array<any> = [];
-        let sopValueSubColors: Array<string> = [];
-        let fixedSopValues: Array<any> = [];
-        for (let i = 0; i < oneCycleData.values.length - 1; i++) {
-          let value = oneCycleData.values[i] - oneCycleData.target[i];
-          sopValueSubTarget.push(value.toFixed(1));
-          fixedSopValues.push(oneCycleData.values[i].toFixed(1));
-          if (value > 0) {
-            sopValueSubColors.push(COLOR_GT_TARGET);
-          } else {
-            sopValueSubColors.push(COLOR_LT_TARGET);
-          }
-        }
-        let sopValueSubTargetDataTrace = {
-          y: sopValueSubTarget,
-          x: steps,
-          name: 'target',
-          type: 'bar',
-          marker: {
-            color: sopValueSubColors,
-          },
-          text: fixedSopValues,
-          orientation: 'v',
-          textposition: 'auto',
-        };
-        setSopWithTargetData([sopTargetTrace, sopValueSubTargetDataTrace]);
-        setOneCycleData(oneCycleData);
-      }
-    }
+    // if (CYCLE_TIME_COLUMN === event.points[0].y.toString()) {
+    //   // setShowCurrentCycle(true);
+    //   let data = event.points[0].data;
+    //   if ('object' === typeof data.record[SOP_DATA_COLUMN]) {
+    //     console.log("@180 it's already an Object., It's not a Cycle Data");
+    //   } else {
+    //     // setCurrentScatterData(data.record);
+    //     let oneCycleData = generateOneCycleData(data.record);
+    //     let sopTargetTrace = {
+    //       y: oneCycleData.target.slice(0, -1),
+    //       x: steps,
+    //       name: 'target',
+    //       type: 'bar',
+    //       marker: {
+    //         color: colors,
+    //       },
+    //       text: oneCycleData.target,
+    //       // orientation: 'h',
+    //     };
+    //     let sopValueSubTarget: Array<any> = [];
+    //     let sopValueSubColors: Array<string> = [];
+    //     let fixedSopValues: Array<any> = [];
+    //     for (let i = 0; i < oneCycleData.values.length - 1; i++) {
+    //       let value = oneCycleData.values[i] - oneCycleData.target[i];
+    //       sopValueSubTarget.push(value.toFixed(1));
+    //       fixedSopValues.push(oneCycleData.values[i].toFixed(1));
+    //       if (value > 0) {
+    //         sopValueSubColors.push(COLOR_GT_TARGET);
+    //       } else {
+    //         sopValueSubColors.push(COLOR_LT_TARGET);
+    //       }
+    //     }
+    //     let sopValueSubTargetDataTrace = {
+    //       y: sopValueSubTarget,
+    //       x: steps,
+    //       name: 'target',
+    //       type: 'bar',
+    //       marker: {
+    //         color: sopValueSubColors,
+    //       },
+    //       text: fixedSopValues,
+    //       orientation: 'v',
+    //       textposition: 'auto',
+    //     };
+    //     setSopWithTargetData([sopTargetTrace, sopValueSubTargetDataTrace]);
+        // setOneCycleData(oneCycleData);
+      // }
   };
 
   let scatterPlotStyle = {
@@ -373,6 +372,9 @@ export default function ScatterPlot(props: ScatterPlotProps) {
             b: 50,
             t: 50,
             pad: 4,
+          },
+          yaxis: {
+            automargin: true,
           },
           autosize: true,
         }}
@@ -434,9 +436,9 @@ export default function ScatterPlot(props: ScatterPlotProps) {
   );
 }
 
-let videoPlaybak = (data: any) => {
-  console.log('@video playbak', data);
-  let url =
-    'https://manage-sales-demo.standalone.powerarena.com:10443/admin/mark-for-reason/?tab=single-view&entity_code=demo_demo_line_cam_007&pos=267&start_ts=1651623239000&end_ts=1651623389000&alert_type=1';
-  window.open(url, '_blank')?.focus();
-};
+// let videoPlaybak = (data: any) => {
+//   console.log('@video playbak', data);
+//   let url =
+//     'https://manage-sales-demo.standalone.powerarena.com:10443/admin/mark-for-reason/?tab=single-view&entity_code=demo_demo_line_cam_007&pos=267&start_ts=1651623239000&end_ts=1651623389000&alert_type=1';
+//   window.open(url, '_blank')?.focus();
+// };

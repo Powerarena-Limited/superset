@@ -80,15 +80,19 @@ export default function CountBar(props: CountBarProps) {
         barmode: 'stack',
         hovermode: 'closest',
         showlegend: false,
-        title: 'Missing Activities Counts',
+        // title: 'Missing Activities Counts',
         margin: {
-          l: 150,
-          r: 20,
-          b: 50,
-          t: 50,
+          l: 50,
+          r: 50,
+          b: 20,
+          t: 20,
           pad: 4,
         },
         autosize: true,
+        yaxis: {
+          ticks: 'outside',
+          automargin: true,
+        }
       }}
     />
   );

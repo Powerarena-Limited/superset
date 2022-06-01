@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Plot from 'react-plotly.js';
 import {
   COLOR_MISSING_ACTIVITY_COLUMN_C_C,
