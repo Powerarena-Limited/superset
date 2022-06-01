@@ -38,6 +38,7 @@ import {
   TARGET_CYCLE_TIME_COLUMN,
   WRONG_SEQUENCE_COLUMN,
   WRONG_SEQUENCE_COLUMN_WRONG,
+  COLOR_MISSING_ACTIVITY_COLUMN_C_C
 } from './constants';
 import { Pie } from './Pie';
 import ScatterPlot from './ScatterPlot';
@@ -228,7 +229,7 @@ export default function Distplot(props: DistplotProps) {
       // opacity: opacities,
       line: {
         width: width,
-        color: '#2B7EF5',
+        color: COLOR_MISSING_ACTIVITY_COLUMN_C_C,
       },
     };
     setDistData(updateDistChartData);

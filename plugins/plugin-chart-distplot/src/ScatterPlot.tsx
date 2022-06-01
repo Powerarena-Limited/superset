@@ -39,6 +39,7 @@ import {
   // COLOR_GT_TARGET,
   // COLOR_LT_TARGET,
   COLOR_SOP_WAITING_STEP_WAITING,
+  COLOR_AVERAGE
 } from './constants';
 
 // The following Styles component is a <div> element, which has been styled using Emotion
@@ -289,7 +290,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
       showlegend: true,
       symbol: '142',
       marker: {
-        color: 'red',
+        color: COLOR_AVERAGE,
         size: 16,
         opacity: 1,
         line: {
