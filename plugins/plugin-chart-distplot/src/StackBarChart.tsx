@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
 import Plot from 'react-plotly.js';
 import {
+  COLOR_COUNT,
+  COLOR_MEDIAN,
   COLOR_SOP_WAITING_STEP_PROCESS,
   COLOR_SOP_WAITING_STEP_WAITING,
+  COLOR_TABLE_LINE,
   CYCLE_TIME_COLUMN,
   SOP_DATA_COLUMN,
   SOP_DATA_COLUMN_VALUE,
@@ -10,6 +13,13 @@ import {
   TARGET_CYCLE_TIME_COLUMN,
   WAITING_TIME,
   WAITING_TIME_WORKING,
+  COLOR_TABLE_FILL,
+  TOTAL_HOUR,
+  UPH,
+  BOTTLENECK,
+  BEST,
+  WORST,
+  BALANCE_RATE
 } from './constants';
 import CountBar from './CountBar';
 import { SopPie } from './SopPie';
@@ -212,7 +222,7 @@ export default function StackBarChart(props: StackBarProps) {
       mode: 'markers',
       type: 'scatter',
       marker: {
-        color: 'yellow',
+        color: COLOR_MEDIAN,
         symbol: '142',
         size: 2,
         line: {
@@ -244,7 +254,7 @@ export default function StackBarChart(props: StackBarProps) {
       type: 'bar',
       mode: 'markers+text',
       marker: {
-        color: '147DD6',
+        color: COLOR_COUNT,
       },
     },
   ];
@@ -263,17 +273,17 @@ export default function StackBarChart(props: StackBarProps) {
       type: 'table',
       header: {
         values: [
-          ['<b>Total Hour</b>'],
-          ['<b>UPH</b>'],
-          ['<b>Bottleneck</b>'],
-          ['<b>Best</b>'],
-          ['<b>Worst</b>'],
-          ['<b>Balance Rate</b>'],
+          [`<b>${TOTAL_HOUR}</b>`],
+          [`<b>${UPH}</b>`],
+          [`<b>${BOTTLENECK}</b>`],
+          [`<b>${BEST}</b>`],
+          [`<b>${WORST}</b>`],
+          [`<b>${BALANCE_RATE}</b>`],
         ],
         align: 'center',
-        line: { width: 1, color: 'black' },
-        fill: { color: 'white' },
-        font: { family: 'Arial', size: 15, color: 'Black' },
+        line: { width: 1, color: COLOR_TABLE_LINE},
+        fill: { color: COLOR_TABLE_FILL },
+        font: { family: 'Arial', size: 15, color: COLOR_TABLE_LINE },
       },
       cells: {
         values: [
@@ -286,8 +296,8 @@ export default function StackBarChart(props: StackBarProps) {
         ],
         height: 35,
         align: 'center',
-        line: { color: 'black', width: 1 },
-        font: { family: 'Arial', size: 30, color: ['black'] },
+        line: { color: COLOR_TABLE_LINE, width: 1 },
+        font: { family: 'Arial', size: 30, color: [COLOR_TABLE_LINE] },
       },
     },
   ];
