@@ -13,7 +13,13 @@ import {
   TARGET_CYCLE_TIME_COLUMN,
   WAITING_TIME,
   WAITING_TIME_WORKING,
-  COLOR_TABLE_FILL
+  COLOR_TABLE_FILL,
+  TOTAL_HOUR,
+  UPH,
+  BOTTLENECK,
+  BEST,
+  WORST,
+  BALANCE_RATE
 } from './constants';
 import CountBar from './CountBar';
 import { SopPie } from './SopPie';
@@ -267,12 +273,12 @@ export default function StackBarChart(props: StackBarProps) {
       type: 'table',
       header: {
         values: [
-          ['<b>Total Hour</b>'],
-          ['<b>UPH</b>'],
-          ['<b>Bottleneck</b>'],
-          ['<b>Best</b>'],
-          ['<b>Worst</b>'],
-          ['<b>Balance Rate</b>'],
+          [`<b>${TOTAL_HOUR}</b>`],
+          [`<b>${UPH}</b>`],
+          [`<b>${BOTTLENECK}</b>`],
+          [`<b>${BEST}</b>`],
+          [`<b>${WORST}</b>`],
+          [`<b>${BALANCE_RATE}</b>`],
         ],
         align: 'center',
         line: { width: 1, color: COLOR_TABLE_LINE},
