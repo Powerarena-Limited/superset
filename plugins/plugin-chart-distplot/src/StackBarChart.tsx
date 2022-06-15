@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import Plot from 'react-plotly.js';
 import {
-  COLOR_COUNT,
   COLOR_MEDIAN,
   COLOR_SOP_WAITING_STEP_PROCESS,
   COLOR_SOP_WAITING_STEP_WAITING,
@@ -19,7 +18,7 @@ import {
   BOTTLENECK,
   BEST,
   WORST,
-  BALANCE_RATE
+  BALANCE_RATE,
 } from './constants';
 import CountBar from './CountBar';
 import { SopPie } from './SopPie';
@@ -226,16 +225,16 @@ export default function StackBarChart(props: StackBarProps) {
         symbol: '142',
         size: 2,
         line: {
-          width: width / x.length / 2 * 1.5,
-        }
-      }
-    }
+          width: (width / x.length / 2) * 1.5,
+        },
+      },
+    };
     return [trace1, trace2, trace3, trace4];
   };
 
   let countY: any = [];
-  x.forEach(_ => countY.push(1000));
-  console.log("countY", countY);
+  x.forEach(_ => countY.push(500));
+  console.log('countY', countY);
   let countBarData: any = [
     {
       name: 'count',
@@ -245,16 +244,17 @@ export default function StackBarChart(props: StackBarProps) {
       text: stackBarChartData.xAxisCount.map((item: any, index: number) => {
         item = parseInt(item);
         return (
-          'COUNT: ' +
+          'COUNT_BAR_CT: ' +
+          stackBarChartData.cycleTimeAverage[index].toString() +
+          ' by ' +
           item.toString() +
-          ' CT: ' +
-          stackBarChartData.cycleTimeAverage[index].toString()
+          ' cycle'
         );
       }),
       type: 'bar',
       mode: 'markers+text',
       marker: {
-        color: COLOR_COUNT,
+        color: COLOR_TABLE_FILL,
       },
     },
   ];
@@ -281,7 +281,7 @@ export default function StackBarChart(props: StackBarProps) {
           [`<b>${BALANCE_RATE}</b>`],
         ],
         align: 'center',
-        line: { width: 1, color: COLOR_TABLE_LINE},
+        line: { width: 0, color: COLOR_TABLE_LINE },
         fill: { color: COLOR_TABLE_FILL },
         font: { family: 'Arial', size: 15, color: COLOR_TABLE_LINE },
       },
@@ -296,7 +296,7 @@ export default function StackBarChart(props: StackBarProps) {
         ],
         height: 35,
         align: 'center',
-        line: { color: COLOR_TABLE_LINE, width: 1 },
+        line: { color: COLOR_TABLE_LINE, width: 0 },
         font: { family: 'Arial', size: 30, color: [COLOR_TABLE_LINE] },
       },
     },
@@ -339,7 +339,7 @@ export default function StackBarChart(props: StackBarProps) {
         layout={{
           hovermode: 'closest',
           font: {
-            size: 16
+            size: 16,
           },
           margin: {
             l: 50,
@@ -365,7 +365,7 @@ export default function StackBarChart(props: StackBarProps) {
         style={{
           height: height * 0.35,
         }}
-        onClick={event => handleOnClickBar(event)}
+        onClick={(event: any) => handleOnClickBar(event)}
         data={stackBarData}
         layout={{
           barmode: 'stack',
