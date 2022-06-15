@@ -15,6 +15,11 @@
 # limitations under the License.
 #
 
+# 0.3.6: docker build --target lean -f PaDockerfile3 . -t registry.gitlab.motherapp.com/powerarena/powerarena-superset:0.3.6
+# => comparison chart
+# 0.3.7: docker build --target lean -f PaDockerfile3 . -t registry.gitlab.motherapp.com/powerarena/powerarena-superset:0.3.7
+# => using new color design
+
 ######################################################################
 # PY stage that simply does a pip install on our requirements
 ######################################################################

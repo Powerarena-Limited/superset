@@ -14,6 +14,10 @@ import {
   MISSING_ACTIVITY_COLUMN_M_W,
   SOP_WAITING_STEP_PROCESS,
   SOP_WAITING_STEP_WAITING,
+  COLOR_HOVER_ACTIVITY_COLUMN_M_W,
+  COLOR_HOVER_ACTIVITY_COLUMN_M_C,
+  COLOR_HOVER_ACTIVITY_COLUMN_C_W,
+  COLOR_HOVER_ACTIVITY_COLUMN_C_C,
 } from './constants';
 import { PieProps } from './types';
 
@@ -33,7 +37,10 @@ export function Pie(props: PieProps) {
     MISSING_ACTIVITY_COLUMN_C_W,
     MISSING_ACTIVITY_COLUMN_C_C,
   ];
-  let initSopWaitingLables = [SOP_WAITING_STEP_WAITING, SOP_WAITING_STEP_PROCESS];
+  let initSopWaitingLables = [
+    SOP_WAITING_STEP_WAITING,
+    SOP_WAITING_STEP_PROCESS,
+  ];
   let missingActivityWidth = [0.1, 0.1, 0.1, 0.1];
   let initSopWaitingWidth = [0.1, 0.1, 0.1, 0.1];
   let missingActivityColors = [
@@ -42,15 +49,20 @@ export function Pie(props: PieProps) {
     COLOR_MISSING_ACTIVITY_COLUMN_C_W,
     COLOR_MISSING_ACTIVITY_COLUMN_C_C,
   ];
+  let hoverActivityColors = [
+    COLOR_HOVER_ACTIVITY_COLUMN_M_W,
+    COLOR_HOVER_ACTIVITY_COLUMN_M_C,
+    COLOR_HOVER_ACTIVITY_COLUMN_C_W,
+    COLOR_HOVER_ACTIVITY_COLUMN_C_C,
+  ];
 
   const [missingColors, setMissingColors] = useState<Array<string>>(
     missingActivityColors,
   );
   const [missingWidth, setMissingWidth] =
     useState<Array<number>>(missingActivityWidth);
-  const [sopWaitingWidth, setSOPWaitingWidth] = useState<Array<number>>(
-    initSopWaitingWidth
-  );
+  const [sopWaitingWidth, setSOPWaitingWidth] =
+    useState<Array<number>>(initSopWaitingWidth);
   const [selected, setSelected] = useState(-1);
 
   // init component state when new data arrived.
@@ -90,7 +102,7 @@ export function Pie(props: PieProps) {
           setMissingColors(missingActivityColors);
           setSelected(-1);
         } else {
-          missingActivityColors[pos] = 'red';
+          missingActivityColors[pos] = hoverActivityColors[pos];
           setMissingColors(missingActivityColors);
           setSelected(pos);
         }
@@ -129,7 +141,7 @@ export function Pie(props: PieProps) {
             line: {
               width: sopWaitingWidth,
               color: COLOR_MISSING_ACTIVITY_COLUMN_C_W,
-            }
+            },
           },
           type: 'pie',
           domain: {

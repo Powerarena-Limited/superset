@@ -21,6 +21,11 @@ import Plot from 'react-plotly.js';
 import React, { useState, useMemo } from 'react';
 import { ScatterPlotProps } from './types';
 import {
+  COLOR_HOVER_ACTIVITY_COLUMN_C_W,
+  COLOR_SOP_WAITING_STEP_WAITING_HOVER,
+  COLOR_DISTRUBUTION_BAR_HOVER,
+} from './constants';
+import {
   EVENT_TS_COLUMN,
   SOP_DATA_COLUMN,
   SOP_DATA_COLUMN_EVENT_TS,
@@ -39,7 +44,6 @@ import {
   // COLOR_GT_TARGET,
   // COLOR_LT_TARGET,
   COLOR_SOP_WAITING_STEP_WAITING,
-  COLOR_AVERAGE
 } from './constants';
 
 // The following Styles component is a <div> element, which has been styled using Emotion
@@ -237,7 +241,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
       averageList,
       steps,
       averageData,
-      '#804D28',
+      '#D25C88',
       16,
       true,
       'average',
@@ -259,7 +263,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
       targetTime,
       steps,
       targetTime,
-      '#F7C153',
+      '#9D91CD',
       16,
       true,
       'target time',
@@ -284,13 +288,23 @@ export default function ScatterPlot(props: ScatterPlotProps) {
   }, [data]);
 
   let handleOnClick = (event: any): void => {
-    console.log('@281', event);
+    console.log(
+      '@281',
+      event,
+      scatterPlotChartData[event.points[0].curveNumber],
+    );
+    let colors: any[] = [];
+    for (let i = 0; i < 10; i++) {
+      colors.push(COLOR_HOVER_ACTIVITY_COLUMN_C_W);
+    }
+    colors.push(COLOR_SOP_WAITING_STEP_WAITING_HOVER);
+    colors.push(COLOR_DISTRUBUTION_BAR_HOVER);
     scatterPlotChartData.push({
       ...scatterPlotChartData[event.points[0].curveNumber],
-      showlegend: true,
+      // showlegend: true,
       symbol: '142',
       marker: {
-        color: COLOR_AVERAGE,
+        color: colors,
         size: 16,
         opacity: 1,
         line: {
@@ -344,8 +358,8 @@ export default function ScatterPlot(props: ScatterPlotProps) {
     //       textposition: 'auto',
     //     };
     //     setSopWithTargetData([sopTargetTrace, sopValueSubTargetDataTrace]);
-        // setOneCycleData(oneCycleData);
-      // }
+    // setOneCycleData(oneCycleData);
+    // }
   };
 
   let scatterPlotStyle = {

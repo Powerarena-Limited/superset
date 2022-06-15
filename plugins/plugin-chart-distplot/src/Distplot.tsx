@@ -38,11 +38,15 @@ import {
   TARGET_CYCLE_TIME_COLUMN,
   WRONG_SEQUENCE_COLUMN,
   WRONG_SEQUENCE_COLUMN_WRONG,
-  COLOR_MISSING_ACTIVITY_COLUMN_C_C
+  COLOR_HOVER_ACTIVITY_COLUMN_C_C,
+  COLOR_DISTRUBUTION_BAR_HOVER,
+  COLOR_TABLE_FILL,
+  COLOR_VIEW_VIDEO_BUTTON,
 } from './constants';
 import { Pie } from './Pie';
 import ScatterPlot from './ScatterPlot';
 import CountBar from './CountBar';
+import Vector from './images/Vector.svg';
 
 // The following Styles component is a <div> element, which has been styled using Emotion
 // For docs, visit https://emotion.sh/docs/styled
@@ -203,7 +207,7 @@ export default function Distplot(props: DistplotProps) {
       ).map((index: number) => {
         if (index === event.points[0].binNumber) {
           setSelected(index);
-          return 'red';
+          return COLOR_DISTRUBUTION_BAR_HOVER;
         } else {
           return COLOR_DISTRUBUTION_BAR;
         }
@@ -229,7 +233,7 @@ export default function Distplot(props: DistplotProps) {
       // opacity: opacities,
       line: {
         width: width,
-        color: COLOR_MISSING_ACTIVITY_COLUMN_C_C,
+        color: COLOR_HOVER_ACTIVITY_COLUMN_C_C,
       },
     };
     setDistData(updateDistChartData);
@@ -256,17 +260,16 @@ export default function Distplot(props: DistplotProps) {
       setDistData(distChartData);
     }
   }, [width, height, selected, data]);
-
   let distplotDivStyle = {
     display: 'flex',
     width: width,
-    height: height * 0.3,
+    height: (height - 75) * 0.5,
     flex: 3,
   };
 
   let distplotStyle = {
     width: width * 0.62,
-    height: height / 2,
+    height: (height - 75) * 0.5,
   };
 
   // let tableData: any = [
@@ -302,16 +305,24 @@ export default function Distplot(props: DistplotProps) {
 
   return (
     <div
-      className="displot"
       style={{
         display: 'flex',
         flexDirection: 'column',
-        flex: 2,
         width: width,
         height: height,
       }}
     >
-      {/* <div
+      <div
+        className="displot"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 2,
+          width: width,
+          height: (height - 75) * 0.5,
+        }}
+      >
+        {/* <div
         style={{
           width: width,
         }}
@@ -330,56 +341,95 @@ export default function Distplot(props: DistplotProps) {
             autosize: true,
           }}
         /> */}
-      {/* </div> */}
-      <div style={distplotDivStyle}>
-        <div>
-          <Plot
-            style={distplotStyle}
-            data={distData}
-            layout={{
-              hovermode: 'x',
-              bargap: 0.05,
-              legend: { orientation: 'h' },
-              margin: {
-                l: 50,
-                r: 20,
-                b: 20,
-                t: 50,
-                pad: 4,
-              },
-              autosize: true,
-            }}
-            onClick={(event: any) => handleOnClick(event)}
-            onHover={(event: any) => handleOnHover(event)}
-            onUnhover={(event: any) => handleOnUnHover(event)}
-          />
-        </div>
+        {/* </div> */}
+        <button
+          style={{
+            width: '84px',
+            height: '25px',
+            border: '1px solid #357470',
+            borderRadius: '8px',
+            marginLeft: 'auto',
+            background: COLOR_TABLE_FILL,
+          }}
+          onClick={() => {
+            setSelectedPie('');
+            setSelected(-1);
+            setScatterData([...scatterRawData]);
+            setCurrentMissingPieData([...currentMissingPieData]);
+          }}
+        >
+          <Vector></Vector>Reset
+        </button>
+        <div style={distplotDivStyle}>
+          <div>
+            <Plot
+              style={distplotStyle}
+              data={distData}
+              layout={{
+                hovermode: 'x',
+                bargap: 0.05,
+                legend: { orientation: 'h' },
+                margin: {
+                  l: 50,
+                  r: 20,
+                  b: 20,
+                  t: 50,
+                  pad: 4,
+                },
+                autosize: true,
+              }}
+              onClick={(event: any) => handleOnClick(event)}
+              onHover={(event: any) => handleOnHover(event)}
+              onUnhover={(event: any) => handleOnUnHover(event)}
+            />
+          </div>
 
-        <div style={{ display: 'flex' }}>
-          <Pie
-            width={width * 0.38}
-            height={height * 0.5}
-            currentMissingPieData={currentMissingPieData}
-            currentWaitingPieData={currentWaitingPieData}
-            pieTitle={pieTitle}
-            handleOnClick={(event: any) => handleOnClickPie(event)}
-          />
+          <div style={{ display: 'flex' }}>
+            <Pie
+              width={width * 0.38}
+              height={(height - 75) * 0.5}
+              currentMissingPieData={currentMissingPieData}
+              currentWaitingPieData={currentWaitingPieData}
+              pieTitle={pieTitle}
+              handleOnClick={(event: any) => handleOnClickPie(event)}
+            />
+          </div>
         </div>
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <ScatterPlot
-          width={width * 0.62}
-          height={height * 0.5}
-          data={scatterData}
-        />
-        <div>
-          <CountBar
-            width={0.38 * width}
-            height={height / 2}
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <ScatterPlot
+            width={width * 0.62}
+            height={(height - 75) * 0.5}
             data={scatterData}
           />
+          <div>
+            <CountBar
+              width={0.38 * width}
+              height={(height - 75) * 0.5}
+              data={scatterData}
+            />
+          </div>
         </div>
       </div>
+      <button
+        style={{
+          width: '100%',
+          height: '40px',
+          background: COLOR_VIEW_VIDEO_BUTTON,
+          borderRadius: '8px',
+          color: COLOR_TABLE_FILL,
+          marginTop: '10px',
+        }}
+        onClick={() => videoPlaybak('View Video')}
+      >
+        View Video
+      </button>
     </div>
   );
 }
+
+let videoPlaybak = (data: any) => {
+  console.log('@video playbak', data);
+  let url =
+    'https://manage-sales-demo.standalone.powerarena.com:10443/admin/mark-for-reason/?tab=single-view&entity_code=demo_demo_line_cam_007&pos=267&start_ts=1651623239000&end_ts=1651623389000&alert_type=1';
+  window.open(url, '_blank')?.focus();
+};
