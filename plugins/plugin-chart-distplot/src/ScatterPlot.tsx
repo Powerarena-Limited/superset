@@ -24,6 +24,7 @@ import {
   COLOR_HOVER_ACTIVITY_COLUMN_C_W,
   COLOR_SOP_WAITING_STEP_WAITING_HOVER,
   COLOR_DISTRUBUTION_BAR_HOVER,
+  SCATTERPLOT_TITLE,
 } from './constants';
 import {
   EVENT_TS_COLUMN,
@@ -380,11 +381,11 @@ export default function ScatterPlot(props: ScatterPlotProps) {
         data={scatterPlotData}
         layout={{
           hovermode: 'closest',
-          legend: { orientation: 'h' },
+          // legend: { orientation: 'h' },
           margin: {
             l: 50,
             r: 20,
-            b: 50,
+            b: 20,
             t: 50,
             pad: 4,
           },
@@ -392,6 +393,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
             automargin: true,
           },
           autosize: true,
+          title: SCATTERPLOT_TITLE,
         }}
         onClick={(event: any) => handleOnClick(event)}
       />

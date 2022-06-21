@@ -42,6 +42,8 @@ import {
   COLOR_DISTRUBUTION_BAR_HOVER,
   COLOR_TABLE_FILL,
   COLOR_VIEW_VIDEO_BUTTON,
+  TARGET_CYCLE_TIME_COLUMN_VALUE,
+  DISTRIBUTION_CHART_ON_THE_TOP_TITLE,
 } from './constants';
 import { Pie } from './Pie';
 import ScatterPlot from './ScatterPlot';
@@ -162,7 +164,6 @@ export default function Distplot(props: DistplotProps) {
       }
     }
   };
-
   let distChartData: Array<any> = [
     {
       type: 'histogram',
@@ -181,9 +182,10 @@ export default function Distplot(props: DistplotProps) {
     {
       type: 'line',
       // mode: 'lines',
+      hoverinfo: 'x',
       x: [targetCycleTime, targetCycleTime],
       y: [0, data.length / 2],
-      name: TARGET_CYCLE_TIME_COLUMN,
+      name: TARGET_CYCLE_TIME_COLUMN_VALUE,
       line: {
         color: COLOR_LINE,
         width: 3,
@@ -377,6 +379,7 @@ export default function Distplot(props: DistplotProps) {
                   pad: 4,
                 },
                 autosize: true,
+                title: DISTRIBUTION_CHART_ON_THE_TOP_TITLE,
               }}
               onClick={(event: any) => handleOnClick(event)}
               onHover={(event: any) => handleOnHover(event)}
@@ -416,6 +419,7 @@ export default function Distplot(props: DistplotProps) {
           height: '40px',
           background: COLOR_VIEW_VIDEO_BUTTON,
           borderRadius: '8px',
+          border: 0,
           color: COLOR_TABLE_FILL,
           marginTop: '10px',
         }}

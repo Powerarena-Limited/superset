@@ -18,6 +18,10 @@ import {
   COLOR_HOVER_ACTIVITY_COLUMN_M_C,
   COLOR_HOVER_ACTIVITY_COLUMN_C_W,
   COLOR_HOVER_ACTIVITY_COLUMN_C_C,
+  COLOR_SOP_WAITING_STEP_PROCESS_HOVER,
+  COLOR_SOP_WAITING_STEP_WAITING_HOVER,
+  PIE_CHART_ON_THE_BOTTOM_TITLE,
+  PIE_CHART_ON_THE_TOP_TITLE,
 } from './constants';
 import { PieProps } from './types';
 
@@ -119,9 +123,10 @@ export function Pie(props: PieProps) {
             colors: missingColors,
             line: {
               width: missingWidth,
-              color: COLOR_MISSING_ACTIVITY_COLUMN_C_W,
+              color: hoverActivityColors,
             },
           },
+          title: { text: PIE_CHART_ON_THE_TOP_TITLE },
           type: 'pie',
           domain: {
             row: 0,
@@ -140,10 +145,14 @@ export function Pie(props: PieProps) {
             ],
             line: {
               width: sopWaitingWidth,
-              color: COLOR_MISSING_ACTIVITY_COLUMN_C_W,
+              color: [
+                COLOR_SOP_WAITING_STEP_WAITING_HOVER,
+                COLOR_SOP_WAITING_STEP_PROCESS_HOVER,
+              ],
             },
           },
           type: 'pie',
+          title: { text: PIE_CHART_ON_THE_BOTTOM_TITLE },
           domain: {
             row: 1,
             column: 0,
