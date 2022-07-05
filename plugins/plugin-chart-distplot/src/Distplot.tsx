@@ -44,6 +44,7 @@ import {
   COLOR_VIEW_VIDEO_BUTTON,
   TARGET_CYCLE_TIME_COLUMN_VALUE,
   DISTRIBUTION_CHART_ON_THE_TOP_TITLE,
+  DISTRIBUTION_CHART_ON_THE_BOTTOM_RIGHT,
 } from './constants';
 import { Pie } from './Pie';
 import ScatterPlot from './ScatterPlot';
@@ -409,6 +410,7 @@ export default function Distplot(props: DistplotProps) {
               width={0.38 * width}
               height={(height - 75) * 0.5}
               data={scatterData}
+              title={DISTRIBUTION_CHART_ON_THE_BOTTOM_RIGHT}
             />
           </div>
         </div>

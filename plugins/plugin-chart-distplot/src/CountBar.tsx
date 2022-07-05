@@ -11,7 +11,6 @@ import {
   COLOR_NVA,
   COLOR_CYCLE_TIME,
   SOP_DATA_COLUMN_EVENT_TS,
-  DISTRIBUTION_CHART_ON_THE_BOTTOM_RIGHT,
   COLOR_VA_HOVER,
   COLOR_RNVA_HOVER,
   COLOR_NVA_HOVER,
@@ -19,7 +18,7 @@ import {
 import { CountBarProps } from './types';
 
 export default function CountBar(props: CountBarProps) {
-  const { data, width, height } = props;
+  const { data, width, height, title } = props;
 
   //   const [counts, setCounts] = useState<Array<any>>();
   let sopData = JSON.parse(data[0][SOP_DATA_COLUMN]);
@@ -75,52 +74,75 @@ export default function CountBar(props: CountBarProps) {
   };
 
   const { accomplishCounts, missingCounts } = generateCounts(data);
+  let layout: any = {
+    barmode: 'stack',
+    hovermode: 'closest',
+    showlegend: false,
+    margin: {
+      l: 50,
+      r: 50,
+      b: 20,
+      t: 20,
+      pad: 4,
+    },
+    autosize: true,
+    yaxis: {
+      ticks: 'outside',
+      automargin: true,
+    },
+  };
+  if (title) {
+    layout['title'] = { text: title };
+    layout['margin'] = {
+      l: 50,
+      r: 20,
+      b: 33,
+      t: 58 + (height - 70) / (steps.length + 1),
+      pad: 4,
+    };
+  }
+
   return (
     <Plot
       style={{ width: width, height: height }}
-      data={[
-        {
-          x: accomplishCounts.reverse(),
-          y: steps,
-          name: 'counts',
-          type: 'bar',
-          marker: {
-            color: accomplishColors,
-          },
-          orientation: 'h',
-        },
-        {
-          x: missingCounts.reverse(),
-          y: steps,
-          name: 'counts',
-          type: 'bar',
-          marker: {
-            color: missingColors,
-            size: 12,
-          },
-          orientation: 'h',
-        },
-      ]}
-      layout={{
-        barmode: 'stack',
-        hovermode: 'closest',
-        showlegend: false,
-        margin: {
-          l: 50,
-          r: 20,
-          b: 33,
-          t: 58 + (height - 70) / (steps.length + 1),
-          pad: 4,
-        },
-        autosize: true,
-        yaxis: {
-          ticks: 'outside',
-          automargin: true,
-        },
-        title: {
-          text: DISTRIBUTION_CHART_ON_THE_BOTTOM_RIGHT,
-        },
-      }}
+      data={
+        title
+          ? [
+              {
+                x: accomplishCounts.reverse(),
+                y: steps,
+                name: 'counts',
+                type: 'bar',
+                marker: {
+                  color: accomplishColors,
+                },
+                orientation: 'h',
+              },
+              {
+                x: missingCounts.reverse(),
+                y: steps,
+                name: 'counts',
+                type: 'bar',
+                marker: {
+                  color: missingColors,
+                },
+                orientation: 'h',
+              },
+            ]
+          : [
+              {
+                x: missingCounts.reverse(),
+                y: steps,
+                name: 'counts',
+                type: 'bar',
+                marker: {
+                  color: accomplishColors,
+                },
+                orientation: 'h',
+              },
+            ]
+      }
+      layout={layout}
     />
   );
 }
