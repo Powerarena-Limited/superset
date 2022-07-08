@@ -299,13 +299,16 @@ export default React.memo(
                    * have to change event ts to local timezone.
                    */
                   try {
-                    if (!isNaN(Date.parse(cell.value)) && "P_EVENT_TS" === cell.column.Header) {
+                    if (
+                      !isNaN(Date.parse(cell.value)) &&
+                      'P_EVENT_TS' === cell.column.Header
+                    ) {
                       // cell.value = new Date(Date.parse(cell.value.split(".")[0]) + 16 * 3600 * 1000).toISOString();
                       // console.log("@296-1", cell.value);
-                    } else if ("event_ts" === cell.column.Header) {
+                    } else if ('event_ts' === cell.column.Header) {
                       // cell.value = new Date(cell.value + 8 * 3600 * 1000).toISOString();
                       cell.value = new Date(cell.value).toISOString();
-                    } else if ("event_ts_timezone" === cell.column.Header) {
+                    } else if ('event_ts_timezone' === cell.column.Header) {
                       cell.value = new Date(cell.value).toISOString();
                     }
                   } catch {
@@ -330,15 +333,13 @@ export default React.memo(
                         className={cx({ 'loading-bar': loading })}
                         role={loading ? 'progressbar' : undefined}
                       >
-                        <span data-test="cell-text">{
-                          cell.value
-                        }</span>
+                        <span data-test="cell-text">{cell.value}</span>
                       </span>
                     </td>
                   );
                 })}
               </tr>
-            ); 
+            );
           })}
       </tbody>
     </Table>
@@ -351,17 +352,18 @@ let showRowData = (row: object) => {
    * if the domain is not superset..., you can set [clientName]-- at chart name head.
    * Example: demo--[Workstations_Chart] clientName = demo.
    */
-  let clientName = "";
-  let port = "10443"
+  let clientName = '';
+  let port = '10443';
   try {
-    clientName = window.location.href.split("superset-")[1].split(".standalone")[0] || "";
-    port = window.location.href.split("powerarena.com:")[1].split("/")[0] || "10443";
-  } catch {
-  }
-  if ("" === clientName) {
-    const chartName = $(".editable-title").children().attr('value');
-    clientName = chartName?.split("--")[0] || "";
-    port = chartName?.split("--")[1] || "10443";
+    clientName =
+      window.location.href.split('superset-')[1].split('.standalone')[0] || '';
+    port =
+      window.location.href.split('powerarena.com:')[1].split('/')[0] || '10443';
+  } catch {}
+  if ('' === clientName) {
+    const chartName = $('.editable-title').children().attr('value');
+    clientName = chartName?.split('--')[0] || '';
+    port = chartName?.split('--')[1] || '10443';
   }
   let entityCode = row['original']['P_DEVICE_ID'];
   let pos = row['original']['P_POS'];
@@ -372,11 +374,23 @@ let showRowData = (row: object) => {
     pos = row['original']['pos'];
     endTime = row['original']['event_ts'];
     startTime = endTime - parseInt(row['original']['cycle_time']) * 1000;
-    if ("NaN" === startTime.toString()) {
+    if ('NaN' === startTime.toString()) {
       startTime = endTime - parseInt(row['original']['value']) * 1000;
     }
   }
-  let url = 'https://manage-' + clientName + '.standalone.powerarena.com:' + port + '/admin/mark-for-reason/?tab=single-view&entity_code=' + entityCode + '&pos=' + pos + '&start_ts=' + startTime + '&end_ts=' + endTime;
-  console.log("@378", url);
+  let url =
+    'https://manage-' +
+    clientName +
+    '.standalone.powerarena.com:' +
+    port +
+    '/app/mes/workstation/playback/?entity_code=' +
+    entityCode +
+    '&pos=' +
+    pos +
+    '&start_ts=' +
+    startTime +
+    '&end_ts=' +
+    endTime;
+  console.log('@378', url);
   window.open(url, '_blank')?.focus();
-}
+};
