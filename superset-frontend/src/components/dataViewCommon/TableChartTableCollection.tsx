@@ -384,7 +384,7 @@ let showRowData = (row: object) => {
     clientName +
     '.standalone.powerarena.com:' +
     port +
-    '/admin/mark-for-reason/?tab=single-view&entity_code=' +
+    '/app/mes/workstation/playback/?entity_code=' +
     entityCode +
     '&pos=' +
     pos +

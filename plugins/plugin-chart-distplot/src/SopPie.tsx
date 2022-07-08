@@ -68,7 +68,6 @@ export function SopPie(props: SopPieProps) {
   };
 
   useMemo(() => {}, [missingWidth]);
-
   return (
     <div style={{ width: width, height: height }}>
       <Plot
@@ -99,6 +98,7 @@ export function SopPie(props: SopPieProps) {
               column: 0,
             },
             textinfo: 'percent',
+            textposition: 'inside',
           },
         ]}
         layout={{

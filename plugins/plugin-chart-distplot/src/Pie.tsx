@@ -116,6 +116,7 @@ export function Pie(props: PieProps) {
       //   column: 0,
       // },
       textinfo: 'percent',
+      textposition: 'inside',
     });
   }
   if (currentWaitingPieData) {
@@ -143,6 +144,7 @@ export function Pie(props: PieProps) {
       //   column: 0,
       // },
       textinfo: 'percent',
+      textposition: 'inside',
     });
   }
   return (

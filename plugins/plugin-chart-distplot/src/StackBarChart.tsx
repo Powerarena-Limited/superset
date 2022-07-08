@@ -27,6 +27,7 @@ import CountBar from './CountBar';
 import { SopPie } from './SopPie';
 import { StackBarProps } from './types';
 import { COUNT_BAR_CT } from './constants';
+// import Popover from 'src/components/Popover';
 
 export default function StackBarChart(props: StackBarProps) {
   const { data, width, height, barColumn } = props;
@@ -324,6 +325,10 @@ export default function StackBarChart(props: StackBarProps) {
       },
     },
   ];
+  const currentMinWidth =
+    width / dataFilteredByXAxis.length < 500
+      ? dataFilteredByXAxis.length * 500 - width
+      : 0;
 
   return (
     <div
@@ -335,6 +340,9 @@ export default function StackBarChart(props: StackBarProps) {
         height: height,
       }}
     >
+      {/* <Popover content={<div>11111</div>} trigger="hover">
+        <div>Hover me</div>
+      </Popover> */}
       <div
         style={{
           width: width,
@@ -355,74 +363,130 @@ export default function StackBarChart(props: StackBarProps) {
           }}
         />
       </div>
-
-      <Plot
-        style={{ width: width, height: 0.05 * height }}
-        data={countBarData}
-        layout={{
-          hovermode: 'closest',
-          font: {
-            size: 16,
-          },
-          margin: {
-            l: 50,
-            r: 50,
-            b: 0,
-            t: 0,
-            pad: 4,
-          },
-          autosize: true,
-          yaxis: {
-            autorange: true,
-            showgrid: false,
-            zeroline: false,
-            showline: false,
-            autotick: true,
-            ticks: '',
-            showticklabels: false,
-          },
-          showlegend: false,
-          bargroupgap: 0.1,
-        }}
-      />
-
-      <Plot
+      <div
         style={{
-          height: height * 0.35,
+          display: 'flex',
+          flexDirection: 'column',
+          minWidth: width,
+          overflowX: 'auto',
+          width: 'auto',
         }}
-        onClick={(event: any) => handleOnClickBar(event)}
-        data={stackBarData}
-        layout={{
-          barmode: 'stack',
-          hovermode: 'closest',
-          legend: { orientation: 'h' },
-          autosize: true,
-          margin: {
-            l: 50,
-            r: 50,
-            b: 20,
-            t: 20,
-            pad: 4,
-          },
-        }}
-      />
-
-      <div style={{ display: 'flex', flexDirection: 'row', width: width }}>
-        {dataFilteredByXAxis.map((item, index) => (
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <SopPie
-              width={width / dataFilteredByXAxis.length}
-              height={height * 0.2}
-              data={item}
-              showlegend={index === 0 ? true : false}
-            />
-            <CountBar
-              width={width / dataFilteredByXAxis.length}
-              height={height * 0.28}
-              data={item}
-            />
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            width: `calc(100% + ${currentMinWidth}px)`,
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '218px',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          ></div>
+          <Plot
+            style={{ height: 0.05 * height, width: 'calc(100% - 218px)' }}
+            data={countBarData}
+            layout={{
+              hovermode: 'closest',
+              font: {
+                size: 16,
+              },
+              margin: {
+                l: 50,
+                r: 50,
+                b: 0,
+                t: 0,
+                pad: 4,
+              },
+              autosize: true,
+              yaxis: {
+                autorange: true,
+                showgrid: false,
+                zeroline: false,
+                showline: false,
+                autotick: true,
+                ticks: '',
+                showticklabels: false,
+              },
+              showlegend: false,
+              bargroupgap: 0.1,
+            }}
+          />
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            width: `calc(100% + ${currentMinWidth}px)`,
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '218px',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <div style={{}}></div>
+            </div>
           </div>
-        ))}
+          <Plot
+            style={{
+              height: height * 0.35,
+              width: 'calc(100% - 218px)',
+            }}
+            onClick={(event: any) => handleOnClickBar(event)}
+            data={stackBarData}
+            layout={{
+              barmode: 'stack',
+              hovermode: 'closest',
+              legend: {
+                orientation: 'h',
+              },
+              autosize: true,
+              margin: {
+                l: 50,
+                r: 50,
+                b: 20,
+                t: 20,
+                pad: 4,
+              },
+            }}
+          />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'row', width: width }}>
+          {dataFilteredByXAxis.map((item, index) => (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <SopPie
+                width={width / dataFilteredByXAxis.length}
+                height={height * 0.2}
+                data={item}
+                showlegend={index === 0 ? true : false}
+              />
+              <CountBar
+                width={width / dataFilteredByXAxis.length}
+                height={height * 0.28}
+                data={item}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
