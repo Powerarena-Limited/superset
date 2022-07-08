@@ -183,7 +183,8 @@ export default function Distplot(props: DistplotProps) {
     {
       type: 'line',
       // mode: 'lines',
-      hoverinfo: 'x',
+      hoverinfo: 'x+text',
+      text: 'target time: ' + targetCycleTime + 'sec',
       x: [targetCycleTime, targetCycleTime],
       y: [0, data.length / 2],
       name: TARGET_CYCLE_TIME_COLUMN_VALUE,
@@ -388,11 +389,17 @@ export default function Distplot(props: DistplotProps) {
             />
           </div>
 
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Pie
               width={width * 0.38}
-              height={(height - 75) * 0.5}
+              height={(height - 75) * 0.5 * 0.6}
               currentMissingPieData={currentMissingPieData}
+              pieTitle={pieTitle}
+              handleOnClick={(event: any) => handleOnClickPie(event)}
+            />
+            <Pie
+              width={width * 0.38}
+              height={(height - 75) * 0.5 * 0.4}
               currentWaitingPieData={currentWaitingPieData}
               pieTitle={pieTitle}
               handleOnClick={(event: any) => handleOnClickPie(event)}

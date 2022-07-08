@@ -96,6 +96,55 @@ export function Pie(props: PieProps) {
       setMissingWidth(missingActivityWidth);
     }
   };
+  let data: any[] = [];
+  if (currentMissingPieData) {
+    data.push({
+      name: MISSING_ACTIVITY_COLUMN_MISSING,
+      values: currentMissingPieData,
+      labels: missingActivityLabels,
+      marker: {
+        colors: missingColors,
+        line: {
+          width: missingWidth,
+          color: hoverActivityColors,
+        },
+      },
+      title: { text: PIE_CHART_ON_THE_TOP_TITLE },
+      type: 'pie',
+      // domain: {
+      //   row: 0,
+      //   column: 0,
+      // },
+      textinfo: 'percent',
+    });
+  }
+  if (currentWaitingPieData) {
+    data.push({
+      name: SOP_WAITING_STEP_WAITING,
+      values: currentWaitingPieData,
+      labels: initSopWaitingLables,
+      marker: {
+        colors: [
+          COLOR_SOP_WAITING_STEP_WAITING,
+          COLOR_SOP_WAITING_STEP_PROCESS,
+        ],
+        line: {
+          width: sopWaitingWidth,
+          color: [
+            COLOR_SOP_WAITING_STEP_WAITING_HOVER,
+            COLOR_SOP_WAITING_STEP_PROCESS_HOVER,
+          ],
+        },
+      },
+      type: 'pie',
+      title: { text: PIE_CHART_ON_THE_BOTTOM_TITLE },
+      // domain: {
+      //   row: 1,
+      //   column: 0,
+      // },
+      textinfo: 'percent',
+    });
+  }
   return (
     <Plot
       style={{ width: width, height: height }}
@@ -114,66 +163,20 @@ export function Pie(props: PieProps) {
       }}
       onHover={(event: any) => handleOnHover(event)}
       onUnhover={(event: any) => handleOnUnHover(event)}
-      data={[
-        {
-          name: MISSING_ACTIVITY_COLUMN_MISSING,
-          values: currentMissingPieData,
-          labels: missingActivityLabels,
-          marker: {
-            colors: missingColors,
-            line: {
-              width: missingWidth,
-              color: hoverActivityColors,
-            },
-          },
-          title: { text: PIE_CHART_ON_THE_TOP_TITLE },
-          type: 'pie',
-          domain: {
-            row: 0,
-            column: 0,
-          },
-          textinfo: 'percent',
-        },
-        {
-          name: SOP_WAITING_STEP_WAITING,
-          values: currentWaitingPieData,
-          labels: initSopWaitingLables,
-          marker: {
-            colors: [
-              COLOR_SOP_WAITING_STEP_WAITING,
-              COLOR_SOP_WAITING_STEP_PROCESS,
-            ],
-            line: {
-              width: sopWaitingWidth,
-              color: [
-                COLOR_SOP_WAITING_STEP_WAITING_HOVER,
-                COLOR_SOP_WAITING_STEP_PROCESS_HOVER,
-              ],
-            },
-          },
-          type: 'pie',
-          title: { text: PIE_CHART_ON_THE_BOTTOM_TITLE },
-          domain: {
-            row: 1,
-            column: 0,
-          },
-          textinfo: 'percent',
-        },
-      ]}
+      data={data}
       layout={{
         hovermode: 'closest',
-        grid: { rows: 2, columns: 1 },
+        // grid: { rows: 2, columns: 1 },
         showlegend: true,
         legend: {
-          x: 1,
-          y: 0.5,
+          orientation: 'h',
         },
-        title: pieTitle,
+        title: currentMissingPieData ? pieTitle : '',
         margin: {
           l: 50,
           r: 20,
-          b: 50,
-          t: 50,
+          b: currentMissingPieData ? 0 : 20,
+          t: currentMissingPieData ? 50 : 20,
           pad: 4,
         },
         autosize: true,

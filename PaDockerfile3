@@ -15,8 +15,8 @@
 # limitations under the License.
 #
 
-# 0.3.8: docker build --target lean -f PaDockerfile3 . -t registry.gitlab.motherapp.com/powerarena/powerarena-superset:0.3.8
-# => using new color design and add header and Bottom chart field alignment
+# 0.3.9: docker build --target lean -f PaDockerfile3 . -t registry.gitlab.motherapp.com/powerarena/powerarena-superset:0.3.9
+# => fruit superset ui update
 
 ######################################################################
 # PY stage that simply does a pip install on our requirements

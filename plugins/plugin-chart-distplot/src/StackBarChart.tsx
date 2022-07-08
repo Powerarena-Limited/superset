@@ -19,10 +19,14 @@ import {
   BEST,
   WORST,
   BALANCE_RATE,
+  COLOR_COUNT_BAR_CYCLE,
+  COLOR_COUNT_BAR_CT,
+  COUNT_BAR_CYCLE,
 } from './constants';
 import CountBar from './CountBar';
 import { SopPie } from './SopPie';
 import { StackBarProps } from './types';
+import { COUNT_BAR_CT } from './constants';
 
 export default function StackBarChart(props: StackBarProps) {
   const { data, width, height, barColumn } = props;
@@ -182,7 +186,7 @@ export default function StackBarChart(props: StackBarProps) {
       },
       text: stackBarChartData.processAverage.map(String),
       textposition: 'auto',
-      name: WAITING_TIME_WORKING,
+      name: WAITING_TIME_WORKING + ' time',
       type: 'bar',
     };
     let trace2 = {
@@ -193,31 +197,34 @@ export default function StackBarChart(props: StackBarProps) {
       },
       text: stackBarChartData.waitingAverage.map(String),
       textposition: 'auto',
-      name: WAITING_TIME,
+      name: WAITING_TIME + ' time',
       type: 'bar',
     };
-    let trace3 = {
-      x: x,
-      y: stackBarChartData.cycleTimeAverage,
-      error_y: {
-        type: 'data',
-        symmetric: false,
-        array: stackBarChartData.max,
-        arrayminus: stackBarChartData.min,
-        visible: true,
-      },
-      text: stackBarChartData.cycleTimeAverage.map(String),
-      textposition: 'auto',
-      name: CYCLE_TIME_COLUMN,
-      mode: 'markers',
-      type: 'scatter',
-    };
+    // let trace3 = {
+    //   x: x,
+    //   y: stackBarChartData.cycleTimeAverage,
+    //   error_y: {
+    //     type: 'data',
+    //     symmetric: false,
+    //     array: stackBarChartData.max,
+    //     arrayminus: stackBarChartData.min,
+    //     visible: true,
+    //   },
+    //   text: stackBarChartData.cycleTimeAverage.map(String),
+    //   textposition: 'auto',
+    //   name: CYCLE_TIME_COLUMN,
+    //   mode: 'markers',
+    //   type: 'scatter',
+    // };
     let trace4 = {
       x: x,
       y: stackBarChartData.target,
-      text: stackBarChartData.target.map(String),
+      text: stackBarChartData.target.map(
+        (item: any) => 'target time: ' + item + 'sec',
+      ),
+      hoverinfo: 'text',
       textposition: 'auto',
-      name: 'target',
+      name: 'target time',
       mode: 'markers',
       type: 'scatter',
       marker: {
@@ -229,32 +236,48 @@ export default function StackBarChart(props: StackBarProps) {
         },
       },
     };
-    return [trace1, trace2, trace3, trace4];
+    return [trace1, trace2, trace4];
   };
 
   let countY: any = [];
   x.forEach(_ => countY.push(500));
-  console.log('countY', countY);
+  console.log('countY', countY, x);
   let countBarData: any = [
     {
       name: 'count',
       x: x,
       y: countY,
-      textposition: 'auto',
+      hoverinfo: 'none',
+      textposition: 'inside',
+      insidetextanchor: 'middle',
       text: stackBarChartData.xAxisCount.map((item: any, index: number) => {
         item = parseInt(item);
         return (
-          'COUNT_BAR_CT: ' +
-          stackBarChartData.cycleTimeAverage[index].toString() +
-          ' by ' +
-          item.toString() +
-          ' cycle'
+          `${COUNT_BAR_CT}: ` +
+          stackBarChartData.cycleTimeAverage[index].toString()
         );
       }),
       type: 'bar',
       mode: 'markers+text',
       marker: {
-        color: COLOR_TABLE_FILL,
+        color: COLOR_COUNT_BAR_CT,
+      },
+    },
+    {
+      name: 'count',
+      x: x,
+      y: countY,
+      hoverinfo: 'none',
+      textposition: 'inside',
+      insidetextanchor: 'middle',
+      text: stackBarChartData.xAxisCount.map((item: any, index: number) => {
+        item = parseInt(item);
+        return `${COUNT_BAR_CYCLE}: ` + item.toString();
+      }),
+      type: 'bar',
+      mode: 'markers+text',
+      marker: {
+        color: COLOR_COUNT_BAR_CYCLE,
       },
     },
   ];
@@ -358,6 +381,8 @@ export default function StackBarChart(props: StackBarProps) {
             ticks: '',
             showticklabels: false,
           },
+          showlegend: false,
+          bargroupgap: 0.1,
         }}
       />
 
@@ -370,7 +395,7 @@ export default function StackBarChart(props: StackBarProps) {
         layout={{
           barmode: 'stack',
           hovermode: 'closest',
-          showlegend: false,
+          legend: { orientation: 'h' },
           autosize: true,
           margin: {
             l: 50,
