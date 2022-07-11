@@ -22,11 +22,21 @@ import {
   COLOR_COUNT_BAR_CYCLE,
   COLOR_COUNT_BAR_CT,
   COUNT_BAR_CYCLE,
+  TARGET_CYCLE_TIME_COLUMN_VALUE,
+  MISSING_ACTIVITY_COLUMN_M_W,
+  MISSING_ACTIVITY_COLUMN_M_C,
+  MISSING_ACTIVITY_COLUMN_C_W,
+  MISSING_ACTIVITY_COLUMN_C_C,
+  COLOR_MISSING_ACTIVITY_COLUMN_M_W,
+  COLOR_MISSING_ACTIVITY_COLUMN_C_C,
+  COUNT_BAR_CT,
+  COLOR_MISSING_ACTIVITY_COLUMN_M_C,
+  COLOR_MISSING_ACTIVITY_COLUMN_C_W,
+  SOP_DATA_COLUMN_NAME,
 } from './constants';
 import CountBar from './CountBar';
 import { SopPie } from './SopPie';
 import { StackBarProps } from './types';
-import { COUNT_BAR_CT } from './constants';
 // import Popover from 'src/components/Popover';
 
 export default function StackBarChart(props: StackBarProps) {
@@ -221,11 +231,11 @@ export default function StackBarChart(props: StackBarProps) {
       x: x,
       y: stackBarChartData.target,
       text: stackBarChartData.target.map(
-        (item: any) => 'target time: ' + item + 'sec',
+        (item: any) => TARGET_CYCLE_TIME_COLUMN_VALUE + ': ' + item + 'sec',
       ),
       hoverinfo: 'text',
       textposition: 'auto',
-      name: 'target time',
+      name: TARGET_CYCLE_TIME_COLUMN_VALUE,
       mode: 'markers',
       type: 'scatter',
       marker: {
@@ -326,9 +336,54 @@ export default function StackBarChart(props: StackBarProps) {
     },
   ];
   const currentMinWidth =
-    width / dataFilteredByXAxis.length < 500
-      ? dataFilteredByXAxis.length * 500 - width
+    width / dataFilteredByXAxis.length < 200
+      ? dataFilteredByXAxis.length * 200 - width
       : 0;
+
+  let legendContainerStyle: any = {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '300px',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+  let legendStyle: any = {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    width: 280,
+    fontSize: 12,
+  };
+  let legendLineStyle: any = {
+    width: '12px',
+    height: '2px',
+    marginRight: '8px',
+  };
+  let legendSquareStyle: any = {
+    width: '12px',
+    height: '12px',
+    marginRight: '8px',
+  };
+  let missingActivityLabels: any[] = [
+    MISSING_ACTIVITY_COLUMN_M_W,
+    MISSING_ACTIVITY_COLUMN_M_C,
+    MISSING_ACTIVITY_COLUMN_C_W,
+    MISSING_ACTIVITY_COLUMN_C_C,
+  ];
+  let missingActivityColors: any[] = [
+    COLOR_MISSING_ACTIVITY_COLUMN_M_W,
+    COLOR_MISSING_ACTIVITY_COLUMN_M_C,
+    COLOR_MISSING_ACTIVITY_COLUMN_C_W,
+    COLOR_MISSING_ACTIVITY_COLUMN_C_C,
+  ];
+  let steps: Array<any> = [];
+  if (dataFilteredByXAxis.length > 0) {
+    let sopData = JSON.parse(dataFilteredByXAxis[0][0][SOP_DATA_COLUMN]);
+    Object.keys(sopData).map((key: any) => {
+      steps.push(sopData[key][SOP_DATA_COLUMN_NAME]);
+    });
+  }
 
   return (
     <div
@@ -379,17 +434,9 @@ export default function StackBarChart(props: StackBarProps) {
             width: `calc(100% + ${currentMinWidth}px)`,
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '218px',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          ></div>
+          <div style={legendContainerStyle}></div>
           <Plot
-            style={{ height: 0.05 * height, width: 'calc(100% - 218px)' }}
+            style={{ height: 0.05 * height, width: 'calc(100% - 300px)' }}
             data={countBarData}
             layout={{
               hovermode: 'closest',
@@ -425,39 +472,32 @@ export default function StackBarChart(props: StackBarProps) {
             width: `calc(100% + ${currentMinWidth}px)`,
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '218px',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <div style={{}}></div>
-            </div>
+          <div style={legendContainerStyle}>
+            {stackBarData.map((data: any, index: number) => (
+              <div style={legendStyle}>
+                <div
+                  style={{
+                    ...(data.type === 'scatter'
+                      ? legendLineStyle
+                      : legendSquareStyle),
+                    backgroundColor: data.marker.color,
+                  }}
+                ></div>
+                <div>{data.name}</div>
+              </div>
+            ))}
           </div>
           <Plot
             style={{
               height: height * 0.35,
-              width: 'calc(100% - 218px)',
+              width: 'calc(100% - 300px)',
             }}
             onClick={(event: any) => handleOnClickBar(event)}
             data={stackBarData}
             layout={{
               barmode: 'stack',
               hovermode: 'closest',
-              legend: {
-                orientation: 'h',
-              },
+              showlegend: false,
               autosize: true,
               margin: {
                 l: 50,
@@ -469,23 +509,95 @@ export default function StackBarChart(props: StackBarProps) {
             }}
           />
         </div>
-
-        <div style={{ display: 'flex', flexDirection: 'row', width: width }}>
-          {dataFilteredByXAxis.map((item, index) => (
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <SopPie
-                width={width / dataFilteredByXAxis.length}
-                height={height * 0.2}
-                data={item}
-                showlegend={index === 0 ? true : false}
-              />
-              <CountBar
-                width={width / dataFilteredByXAxis.length}
-                height={height * 0.28}
-                data={item}
-              />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            width: `calc(100% + ${currentMinWidth}px)`,
+          }}
+        >
+          <div style={legendContainerStyle}>
+            <div style={{ ...legendContainerStyle, height: height * 0.2 }}>
+              {missingActivityLabels.map((label: string, index: number) => (
+                <div style={legendStyle}>
+                  <div
+                    style={{
+                      ...legendSquareStyle,
+                      backgroundColor: missingActivityColors[index],
+                    }}
+                  ></div>
+                  <div>{label}</div>
+                </div>
+              ))}
             </div>
-          ))}
+            <div
+              style={{
+                ...legendContainerStyle,
+                height: height * 0.28,
+                padding: '20px 0 20px 0',
+              }}
+            >
+              {steps.map((step: number, index: number) => (
+                <div
+                  style={{
+                    ...legendStyle,
+                    flexGrow: 1,
+                    height: 0,
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  {step}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div
+            style={{
+              width: 'calc(100% - 300px)',
+              display: 'flex',
+              flexDirection: 'row',
+              marginLeft: 50,
+              marginRight: 50,
+            }}
+          >
+            {dataFilteredByXAxis.map((item, index) => (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  width: 0,
+                  flexGrow: 1,
+                }}
+              >
+                <SopPie
+                  width={'100%'}
+                  height={height * 0.2}
+                  data={item}
+                  showlegend={false}
+                  margin={{
+                    l: 20,
+                    r: 20,
+                    b: 20,
+                    t: 20,
+                    pad: 4,
+                  }}
+                />
+                <CountBar
+                  width={'100%'}
+                  height={height * 0.28}
+                  data={item}
+                  isShowticklabels={true}
+                  margin={{
+                    l: 40,
+                    r: 20,
+                    b: 20,
+                    t: 20,
+                    pad: 4,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

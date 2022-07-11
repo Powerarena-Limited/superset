@@ -18,7 +18,7 @@ import {
 import { CountBarProps } from './types';
 
 export default function CountBar(props: CountBarProps) {
-  const { data, width, height, title } = props;
+  const { data, width, height, title, isShowticklabels, margin } = props;
 
   //   const [counts, setCounts] = useState<Array<any>>();
   let sopData = JSON.parse(data[0][SOP_DATA_COLUMN]);
@@ -78,17 +78,20 @@ export default function CountBar(props: CountBarProps) {
     barmode: 'stack',
     hovermode: 'closest',
     showlegend: false,
-    margin: {
-      l: 50,
-      r: 50,
-      b: 20,
-      t: 20,
-      pad: 4,
-    },
+    margin: margin
+      ? margin
+      : {
+          l: 50,
+          r: 50,
+          b: 20,
+          t: 20,
+          pad: 4,
+        },
     autosize: true,
     yaxis: {
       ticks: 'outside',
       automargin: true,
+      showticklabels: isShowticklabels ? false : true,
     },
   };
   if (title) {
