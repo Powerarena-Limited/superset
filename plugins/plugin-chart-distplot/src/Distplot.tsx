@@ -81,12 +81,12 @@ export default function Distplot(props: DistplotProps) {
   >([0, 0]);
   const [scatterData, setScatterData] = useState(data);
   const [scatterRawData, setScatterRawData] = useState<any>(data);
-  const [pieTitle, setPieTitle] = useState(
-    'Click to left bar to show Pie Chart',
-  );
+  // const [pieTitle, setPieTitle] = useState(
+  //   'Click to left bar to show Pie Chart',
+  // );
   const [distData, setDistData] = useState<Array<any>>([{}]);
-  const [selected, setSelected] = useState<number>(-1);
-  const [selectedPie, setSelectedPie] = useState<string>('-1');
+  const [selected, setSelected] = useState<Array<any>>([]);
+  const [selectedPie, setSelectedPie] = useState<Array<string>>([]);
 
   let targetCycleTime = data[0][TARGET_CYCLE_TIME_COLUMN];
   let cycleTimeList: Array<number> = [];
@@ -139,7 +139,7 @@ export default function Distplot(props: DistplotProps) {
     }
     setCurrentMissingPieData(missingPieData);
     setCurrentwaitingPieData(waitingPieData);
-    setPieTitle('Cycle Time From: ' + start + ' To ' + end);
+    // setPieTitle('Cycle Time From: ' + start + ' To ' + end);
     setScatterData(scatterData);
     setScatterRawData(scatterData);
     setCurrentMissingPieRawData(missingPieRawData);
@@ -147,22 +147,34 @@ export default function Distplot(props: DistplotProps) {
 
   let parseActivities = (activities: any): any => JSON.parse(activities);
   let handleOnClickPie = (event: any) => {
-    let label = event.points[0].label;
-    console.log('@142', selectedPie, label);
-    if (selectedPie === label) {
-      setScatterData(scatterRawData);
-      setSelectedPie('');
+    let label = event.points[0].label,
+      selectedPieData: Array<any> = selectedPie;
+    if (selectedPieData.indexOf(label) === -1) {
+      selectedPieData.push(label);
+      setSelectedPie(selectedPieData);
     } else {
-      setSelectedPie(label);
-      if (MISSING_ACTIVITY_COLUMN_M_W === label) {
-        setScatterData(currentMissingPieRawData[0]);
-      } else if (MISSING_ACTIVITY_COLUMN_M_C === label) {
-        setScatterData(currentMissingPieRawData[1]);
-      } else if (MISSING_ACTIVITY_COLUMN_C_W === label) {
-        setScatterData(currentMissingPieRawData[2]);
-      } else if (MISSING_ACTIVITY_COLUMN_C_C === label) {
-        setScatterData(currentMissingPieRawData[3]);
+      selectedPieData = selectedPieData.filter(
+        (item: string) => item !== label,
+      );
+      setSelectedPie(selectedPieData);
+    }
+    console.log('@142', selectedPieData, label);
+    let pieData: Array<any> = [];
+    for (let i = 0; i < selectedPieData.length; i++) {
+      if (MISSING_ACTIVITY_COLUMN_M_W === selectedPieData[i]) {
+        pieData = pieData.concat(currentMissingPieRawData[0]);
+      } else if (MISSING_ACTIVITY_COLUMN_M_C === selectedPieData[i]) {
+        pieData = pieData.concat(currentMissingPieRawData[1]);
+      } else if (MISSING_ACTIVITY_COLUMN_C_W === selectedPieData[i]) {
+        pieData = pieData.concat(currentMissingPieRawData[2]);
+      } else if (MISSING_ACTIVITY_COLUMN_C_C === selectedPieData[i]) {
+        pieData = pieData.concat(currentMissingPieRawData[3]);
       }
+    }
+    if (selectedPieData.length === 0) {
+      setScatterData(scatterRawData);
+    } else {
+      setScatterData(pieData);
     }
   };
   let distChartData: Array<any> = [
@@ -195,30 +207,44 @@ export default function Distplot(props: DistplotProps) {
     },
   ];
   let handleOnClick = (event: any) => {
-    setSelectedPie('');
-    if (selected === event.points[0].binNumber) {
-      setSelected(-1);
-    } else {
+    setSelectedPie([]);
+    let selectedData = selected;
+    if (
+      selectedData.filter((item: any) => item.id === event.points[0].binNumber)
+        .length === 0
+    ) {
       let indices: Array<number> = event.points[0].pointIndices;
+      selectedData.push({ id: event.points[0].binNumber, indices: indices });
+      setSelected(selectedData);
+    } else {
+      selectedData = selectedData.filter(
+        (item: any) => item.id !== event.points[0].binNumber,
+      );
+      setSelected(selectedData);
+    }
+    let indices: Array<any> = [];
+    for (const item of selectedData) {
+      indices = indices.concat(item.indices);
+    }
+    if (selectedData.length > 0) {
       setPieChart(
         indices,
         (event.points[0].x - DIST_X_SIZE / 2).toString(),
         (event.points[0].x + DIST_X_SIZE / 2).toString(),
       );
-      let updateDistChartData = distChartData;
-      let colors = Array.from(
-        Array((DIST_X_END - DIST_X_START) / DIST_X_SIZE).keys(),
-      ).map((index: number) => {
-        if (index === event.points[0].binNumber) {
-          setSelected(index);
-          return COLOR_DISTRUBUTION_BAR_HOVER;
-        } else {
-          return COLOR_DISTRUBUTION_BAR;
-        }
-      });
-      updateDistChartData[0].marker = { color: colors };
-      setDistData(updateDistChartData);
     }
+    let updateDistChartData = distChartData;
+    let colors = Array.from(
+      Array((DIST_X_END - DIST_X_START) / DIST_X_SIZE).keys(),
+    ).map((index: number) => {
+      if (selectedData.filter((item: any) => item.id === index).length > 0) {
+        return COLOR_DISTRUBUTION_BAR_HOVER;
+      } else {
+        return COLOR_DISTRUBUTION_BAR;
+      }
+    });
+    updateDistChartData[0].marker = { color: colors };
+    setDistData(updateDistChartData);
   };
 
   let handleOnHover = (event: any) => {
@@ -259,7 +285,7 @@ export default function Distplot(props: DistplotProps) {
     // const root = rootElem.current as HTMLElement;
     // console.log('Plugin element', root);
     let initIndices = Array.from(Array(data.length).keys());
-    if (selected === -1) {
+    if (selected.length === 0) {
       setPieChart(initIndices, DIST_X_START.toString(), DIST_X_END.toString());
       setDistData(distChartData);
     }
@@ -356,8 +382,8 @@ export default function Distplot(props: DistplotProps) {
             background: COLOR_TABLE_FILL,
           }}
           onClick={() => {
-            setSelectedPie('');
-            setSelected(-1);
+            setSelectedPie([]);
+            setSelected([]);
             setScatterData([...scatterRawData]);
             setCurrentMissingPieData([...currentMissingPieData]);
           }}
@@ -392,16 +418,16 @@ export default function Distplot(props: DistplotProps) {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Pie
               width={width * 0.38}
-              height={(height - 75) * 0.5 * 0.6}
+              height={(height - 75) * 0.5 * 0.55}
               currentMissingPieData={currentMissingPieData}
-              pieTitle={pieTitle}
+              // pieTitle={pieTitle}
               handleOnClick={(event: any) => handleOnClickPie(event)}
             />
             <Pie
               width={width * 0.38}
-              height={(height - 75) * 0.5 * 0.4}
+              height={(height - 75) * 0.5 * 0.45}
               currentWaitingPieData={currentWaitingPieData}
-              pieTitle={pieTitle}
+              // pieTitle={pieTitle}
               handleOnClick={(event: any) => handleOnClickPie(event)}
             />
           </div>

@@ -5,15 +5,15 @@ import {
   SOP_DATA_COLUMN_NAME,
   SOP_DATA_COLUMN_LEAN,
   SOP_DATA_COLUMN_TARGET,
-  CYCLE_TIME_COLUMN,
   COLOR_VA,
   COLOR_RNVA,
-  COLOR_NVA,
-  COLOR_CYCLE_TIME,
   SOP_DATA_COLUMN_EVENT_TS,
   COLOR_VA_HOVER,
   COLOR_RNVA_HOVER,
+  COLOR_SOP_WAITING_STEP_WAITING,
+  COLOR_SOP_WAITING_STEP_WAITING_HOVER,
   COLOR_NVA_HOVER,
+  COLOR_NVA
 } from './constants';
 import { CountBarProps } from './types';
 
@@ -25,9 +25,14 @@ export default function CountBar(props: CountBarProps) {
   let steps: Array<any> = [];
   let lean: Array<string> = [];
   let targetTime: Array<any> = [];
-  Object.keys(sopData).map((key: any) => {
+  Object.keys(sopData).map((key: any, index: number) => {
     steps.unshift(sopData[key][SOP_DATA_COLUMN_NAME]);
-    lean.unshift(sopData[key][SOP_DATA_COLUMN_LEAN]);
+    if (index === 0) {
+      // first step always waiting step
+      lean.unshift('WAITING');
+    } else {
+      lean.unshift(sopData[key][SOP_DATA_COLUMN_LEAN]);
+    }
     targetTime.unshift(sopData[key][SOP_DATA_COLUMN_TARGET]);
   });
   let generateColors = (data: any, stringColorMap: any): Array<any> => {
@@ -40,16 +45,16 @@ export default function CountBar(props: CountBarProps) {
     return listColor;
   };
   let accomplishColors = generateColors(lean, {
+    WAITING: COLOR_SOP_WAITING_STEP_WAITING,
     VA: COLOR_VA,
     RNVA: COLOR_RNVA,
     NVA: COLOR_NVA,
-    [CYCLE_TIME_COLUMN]: COLOR_CYCLE_TIME,
   });
   let missingColors = generateColors(lean, {
+    WAITING: COLOR_SOP_WAITING_STEP_WAITING_HOVER,
     VA: COLOR_VA_HOVER,
     RNVA: COLOR_RNVA_HOVER,
     NVA: COLOR_NVA_HOVER,
-    [CYCLE_TIME_COLUMN]: COLOR_CYCLE_TIME,
   });
 
   let generateCounts = (data: any) => {

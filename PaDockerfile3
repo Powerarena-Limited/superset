@@ -88,7 +88,7 @@ RUN npm config set registry https://registry.npm.taobao.org
 # RUN npm i --save plotyl.js react-plotly.js @types/react-plotly.js
 COPY ./superset-frontend /app/superset-frontend
 COPY ./superset-ui /app/superset-ui
-RUN cd /app/superset-frontend && npm link ../superset-ui/plugins/plugin-chart-hello-world ../superset-ui/plugins/plugin-chart-distplot
+RUN cd /app/superset-frontend && npm link ../superset-ui/plugins/plugin-chart-distplot
 COPY ./superset-frontend/package.json /app/superset-frontend/package.json
 RUN cat /app/superset-frontend/package.json
 # This seems to be the most expensive step

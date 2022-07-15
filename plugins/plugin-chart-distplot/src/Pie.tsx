@@ -67,12 +67,12 @@ export function Pie(props: PieProps) {
     useState<Array<number>>(missingActivityWidth);
   const [sopWaitingWidth, setSOPWaitingWidth] =
     useState<Array<number>>(initSopWaitingWidth);
-  const [selected, setSelected] = useState(-1);
+  const [selected, setSelected] = useState<Array<number>>([]);
 
   // init component state when new data arrived.
   useMemo(() => {
     setMissingColors(missingActivityColors);
-    setSelected(-1);
+    setSelected([]);
   }, [pieTitle, currentMissingPieData, currentWaitingPieData]);
 
   let handleOnHover = (event: any) => {
@@ -153,14 +153,18 @@ export function Pie(props: PieProps) {
       onClick={(event: any) => {
         let label = event.points[0].label;
         let pos = missingActivityLabels.indexOf(label);
-        if (selected === pos) {
-          setMissingColors(missingActivityColors);
-          setSelected(-1);
+        let selectedList: Array<number> = selected;
+        if (selected.indexOf(pos) === -1) {
+          selectedList.push(pos);
+          setSelected(selectedList);
         } else {
-          missingActivityColors[pos] = hoverActivityColors[pos];
-          setMissingColors(missingActivityColors);
-          setSelected(pos);
+          selectedList = selectedList.filter((item: any) => item !== pos);
+          setSelected(selectedList);
         }
+        for (const item of selectedList) {
+          missingActivityColors[item] = hoverActivityColors[item];
+        }
+        setMissingColors(missingActivityColors);
         handleOnClick(event);
       }}
       onHover={(event: any) => handleOnHover(event)}
@@ -178,7 +182,7 @@ export function Pie(props: PieProps) {
           l: 50,
           r: 20,
           b: currentMissingPieData ? 0 : 20,
-          t: currentMissingPieData ? 50 : 20,
+          t: 20,
           pad: 4,
         },
         autosize: true,

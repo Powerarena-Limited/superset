@@ -21,10 +21,10 @@ import Plot from 'react-plotly.js';
 import React, { useState, useMemo } from 'react';
 import { ScatterPlotProps } from './types';
 import {
-  COLOR_HOVER_ACTIVITY_COLUMN_C_W,
   COLOR_SOP_WAITING_STEP_WAITING_HOVER,
   COLOR_DISTRUBUTION_BAR_HOVER,
   SCATTERPLOT_TITLE,
+  COLOR_SOP_WAITING_STEP_PROCESS_HOVER,
 } from './constants';
 import {
   EVENT_TS_COLUMN,
@@ -278,6 +278,13 @@ export default function ScatterPlot(props: ScatterPlotProps) {
   };
 
   let scatterPlotChartData: any = generateTraces(data, steps);
+  let hoverColors: any = {
+    [COLOR_SOP_WAITING_STEP_WAITING]: COLOR_SOP_WAITING_STEP_WAITING_HOVER,
+    [COLOR_VA]: COLOR_SOP_WAITING_STEP_PROCESS_HOVER,
+    [COLOR_RNVA]: COLOR_SOP_WAITING_STEP_PROCESS_HOVER,
+    [COLOR_NVA]: COLOR_SOP_WAITING_STEP_PROCESS_HOVER,
+    [COLOR_CYCLE_TIME]: COLOR_DISTRUBUTION_BAR_HOVER,
+  };
 
   // const rootElem = createRef<HTMLDivElement>();
   // Often, you just want to get a hold of the DOM and go nuts.
@@ -295,11 +302,12 @@ export default function ScatterPlot(props: ScatterPlotProps) {
       scatterPlotChartData[event.points[0].curveNumber],
     );
     let colors: any[] = [];
-    for (let i = 0; i < 10; i++) {
-      colors.push(COLOR_HOVER_ACTIVITY_COLUMN_C_W);
+    for (const color of scatterPlotChartData[event.points[0].curveNumber].marker
+      .color) {
+      colors.push(
+        color ? hoverColors[color] : COLOR_SOP_WAITING_STEP_PROCESS_HOVER,
+      );
     }
-    colors.push(COLOR_SOP_WAITING_STEP_WAITING_HOVER);
-    colors.push(COLOR_DISTRUBUTION_BAR_HOVER);
     scatterPlotChartData.push({
       ...scatterPlotChartData[event.points[0].curveNumber],
       // showlegend: true,

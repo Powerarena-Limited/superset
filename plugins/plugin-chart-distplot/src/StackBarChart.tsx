@@ -4,7 +4,6 @@ import {
   COLOR_MEDIAN,
   COLOR_SOP_WAITING_STEP_PROCESS,
   COLOR_SOP_WAITING_STEP_WAITING,
-  COLOR_TABLE_LINE,
   CYCLE_TIME_COLUMN,
   SOP_DATA_COLUMN,
   SOP_DATA_COLUMN_VALUE,
@@ -12,12 +11,8 @@ import {
   TARGET_CYCLE_TIME_COLUMN,
   WAITING_TIME,
   WAITING_TIME_WORKING,
-  COLOR_TABLE_FILL,
-  TOTAL_HOUR,
   UPH,
   BOTTLENECK,
-  BEST,
-  WORST,
   BALANCE_RATE,
   COLOR_COUNT_BAR_CYCLE,
   COLOR_COUNT_BAR_CT,
@@ -33,6 +28,10 @@ import {
   COLOR_MISSING_ACTIVITY_COLUMN_M_C,
   COLOR_MISSING_ACTIVITY_COLUMN_C_W,
   SOP_DATA_COLUMN_NAME,
+  PRODUCTION_OUTPUT,
+  OPERATED_HOUR,
+  BEST_PERFORMANCE,
+  QPL
 } from './constants';
 import CountBar from './CountBar';
 import { SopPie } from './SopPie';
@@ -152,6 +151,7 @@ export default function StackBarChart(props: StackBarProps) {
     let totalTime: any = 0;
     let uph: number = 0;
     let bottleneck: any = '';
+    let bestPerformance: any = '';
     let best: any = '';
     let worst: any = '';
     let rate: any = '80%';
@@ -163,8 +163,10 @@ export default function StackBarChart(props: StackBarProps) {
     best = Math.min(...data.cycleTimeAverage);
     worst = Math.max(...data.cycleTimeAverage);
     let bottleneckIndex = data.cycleTimeAverage.indexOf(worst.toFixed(2));
-    console.log(data.cycleTimeAverage, bottleneckIndex);
+    let bestPerformanceIndex = data.cycleTimeAverage.indexOf(best.toFixed(2));
+    console.log(data.cycleTimeAverage, bottleneckIndex, x);
     bottleneck = x[bottleneckIndex];
+    bestPerformance = x[bestPerformanceIndex];
 
     rate =
       data.cycleTimeAverage.reduce(
@@ -172,11 +174,11 @@ export default function StackBarChart(props: StackBarProps) {
         0,
       ) /
       (worst * x.length);
-
     return {
       totalTime: (totalTime / 3600).toFixed(2), // hour
       uph: uph,
       bottleneck: bottleneck,
+      bestPerformance: bestPerformance,
       best: best,
       worst: worst,
       rate: (rate * 100).toFixed(2) + '%',
@@ -302,43 +304,43 @@ export default function StackBarChart(props: StackBarProps) {
     console.log('@108');
   }, [stackBarChartData.xLength]);
 
-  let tableData: any = [
-    {
-      type: 'table',
-      header: {
-        values: [
-          [`<b>${TOTAL_HOUR}</b>`],
-          [`<b>${UPH}</b>`],
-          [`<b>${BOTTLENECK}</b>`],
-          [`<b>${BEST}</b>`],
-          [`<b>${WORST}</b>`],
-          [`<b>${BALANCE_RATE}</b>`],
-        ],
-        align: 'center',
-        line: { width: 0, color: COLOR_TABLE_LINE },
-        fill: { color: COLOR_TABLE_FILL },
-        font: { family: 'Arial', size: 15, color: COLOR_TABLE_LINE },
-      },
-      cells: {
-        values: [
-          [tableRawData.totalTime],
-          [tableRawData.uph],
-          [tableRawData.bottleneck],
-          [tableRawData.best],
-          [tableRawData.worst],
-          [tableRawData.rate],
-        ],
-        height: 35,
-        align: 'center',
-        line: { color: COLOR_TABLE_LINE, width: 0 },
-        font: { family: 'Arial', size: 30, color: [COLOR_TABLE_LINE] },
-      },
-    },
-  ];
+  // let tableData: any = [
+  //   {
+  //     type: 'table',
+  //     header: {
+  //       values: [
+  //         [`<b>${TOTAL_HOUR}</b>`],
+  //         [`<b>${UPH}</b>`],
+  //         [`<b>${BOTTLENECK}</b>`],
+  //         [`<b>${BEST}</b>`],
+  //         [`<b>${WORST}</b>`],
+  //         [`<b>${BALANCE_RATE}</b>`],
+  //       ],
+  //       align: 'center',
+  //       line: { width: 0, color: COLOR_TABLE_LINE },
+  //       fill: { color: COLOR_TABLE_FILL },
+  //       font: { family: 'Arial', size: 15, color: COLOR_TABLE_LINE },
+  //     },
+  //     cells: {
+  //       values: [
+  //         [tableRawData.totalTime],
+  //         [tableRawData.uph],
+  //         [tableRawData.bottleneck],
+  //         [tableRawData.best],
+  //         [tableRawData.worst],
+  //         [tableRawData.rate],
+  //       ],
+  //       height: 35,
+  //       align: 'center',
+  //       line: { color: COLOR_TABLE_LINE, width: 0 },
+  //       font: { family: 'Arial', size: 30, color: [COLOR_TABLE_LINE] },
+  //     },
+  //   },
+  // ];
   const currentMinWidth =
-    width / dataFilteredByXAxis.length < 200
-      ? dataFilteredByXAxis.length * 200 - width
-      : 0;
+    (width - 300) / dataFilteredByXAxis.length < 200
+      ? dataFilteredByXAxis.length * 200 + 300
+      : width;
 
   let legendContainerStyle: any = {
     display: 'flex',
@@ -384,6 +386,27 @@ export default function StackBarChart(props: StackBarProps) {
       steps.push(sopData[key][SOP_DATA_COLUMN_NAME]);
     });
   }
+  let tableListStyle: any = {
+    width: 0,
+    flexGrow: 1,
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  };
+  let tableLineStyle: any = {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  };
+  let tableTextStyle: any = {
+    width: 0,
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex',
+  };
 
   return (
     <div
@@ -403,7 +426,63 @@ export default function StackBarChart(props: StackBarProps) {
           width: width,
         }}
       >
-        <Plot
+        <div
+          style={{
+            width: width,
+            height: 0.12 * height,
+            display: 'flex',
+            flexDirection: 'row',
+            padding: '0 50px 10px 50px',
+          }}
+        >
+          <div style={tableListStyle}>
+            <div style={{ ...tableLineStyle, height: '25%' }}>
+              {BALANCE_RATE}
+            </div>
+            <div style={{ ...tableLineStyle, height: '25%' }}></div>
+            <div style={{ ...tableLineStyle, height: '50%', fontSize: '36px' }}>
+              {tableRawData.rate}
+            </div>
+          </div>
+          <div style={tableListStyle}>
+            <div style={{ ...tableLineStyle, height: '25%' }}>
+              {PRODUCTION_OUTPUT}
+            </div>
+            <div style={{ ...tableLineStyle, height: '25%' }}>
+              <div style={tableTextStyle}>{OPERATED_HOUR}</div>
+              <div style={tableTextStyle}>{UPH}</div>
+            </div>
+            <div style={{ ...tableLineStyle, height: '50%', fontSize: '36px' }}>
+              <div style={tableTextStyle}>{tableRawData.totalTime}</div>
+              <div style={tableTextStyle}>{tableRawData.uph}</div>
+            </div>
+          </div>
+          <div style={tableListStyle}>
+            <div style={{ ...tableLineStyle, height: '25%' }}>
+              {BEST_PERFORMANCE}
+            </div>
+            <div style={{ ...tableLineStyle, height: '25%' }}>
+              <div style={tableTextStyle}>{QPL}</div>
+              <div style={tableTextStyle}>{COUNT_BAR_CT}</div>
+            </div>
+            <div style={{ ...tableLineStyle, height: '50%', fontSize: '36px' }}>
+              <div style={tableTextStyle}>{tableRawData.bestPerformance}</div>
+              <div style={tableTextStyle}>{tableRawData.best}s</div>
+            </div>
+          </div>
+          <div style={tableListStyle}>
+            <div style={{ ...tableLineStyle, height: '25%' }}>{BOTTLENECK}</div>
+            <div style={{ ...tableLineStyle, height: '25%' }}>
+              <div style={tableTextStyle}>{QPL}</div>
+              <div style={tableTextStyle}>{COUNT_BAR_CT}</div>
+            </div>
+            <div style={{ ...tableLineStyle, height: '50%', fontSize: '36px' }}>
+              <div style={tableTextStyle}>{tableRawData.bottleneck}</div>
+              <div style={tableTextStyle}>{tableRawData.worst}s</div>
+            </div>
+          </div>
+        </div>
+        {/* <Plot
           style={{ width: width, height: 0.12 * height }}
           data={tableData}
           layout={{
@@ -416,7 +495,7 @@ export default function StackBarChart(props: StackBarProps) {
             },
             autosize: true,
           }}
-        />
+        /> */}
       </div>
       <div
         style={{
@@ -431,7 +510,7 @@ export default function StackBarChart(props: StackBarProps) {
           style={{
             display: 'flex',
             flexDirection: 'row',
-            width: `calc(100% + ${currentMinWidth}px)`,
+            width: currentMinWidth,
           }}
         >
           <div style={legendContainerStyle}></div>
@@ -469,7 +548,7 @@ export default function StackBarChart(props: StackBarProps) {
           style={{
             display: 'flex',
             flexDirection: 'row',
-            width: `calc(100% + ${currentMinWidth}px)`,
+            width: currentMinWidth,
           }}
         >
           <div style={legendContainerStyle}>
@@ -513,7 +592,7 @@ export default function StackBarChart(props: StackBarProps) {
           style={{
             display: 'flex',
             flexDirection: 'row',
-            width: `calc(100% + ${currentMinWidth}px)`,
+            width: currentMinWidth,
           }}
         >
           <div style={legendContainerStyle}>
