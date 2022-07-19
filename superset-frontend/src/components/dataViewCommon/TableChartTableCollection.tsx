@@ -365,14 +365,16 @@ let showRowData = (row: object) => {
     clientName = chartName?.split('--')[0] || '';
     port = chartName?.split('--')[1] || '10443';
   }
+  console.log('@368', row['original']);
+  // add 10 * 1000,Ensure that the playback page data is displayed normally
   let entityCode = row['original']['P_DEVICE_ID'];
   let pos = row['original']['P_POS'];
-  let endTime = Date.parse(row['original']['P_EVENT_TS']);
+  let endTime = Date.parse(row['original']['P_EVENT_TS']) + 10 * 1000;
   let startTime = endTime - parseInt(row['original']['P_VALUE']) * 1000;
   if (undefined === entityCode) {
     entityCode = row['original']['device_id'];
     pos = row['original']['pos'];
-    endTime = row['original']['event_ts'];
+    endTime = row['original']['event_ts'] + 10 * 1000;
     startTime = endTime - parseInt(row['original']['cycle_time']) * 1000;
     if ('NaN' === startTime.toString()) {
       startTime = endTime - parseInt(row['original']['value']) * 1000;
