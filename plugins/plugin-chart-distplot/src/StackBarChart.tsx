@@ -11,9 +11,6 @@ import {
   TARGET_CYCLE_TIME_COLUMN,
   WAITING_TIME,
   WAITING_TIME_WORKING,
-  UPH,
-  BOTTLENECK,
-  BALANCE_RATE,
   COLOR_COUNT_BAR_CYCLE,
   COLOR_COUNT_BAR_CT,
   COUNT_BAR_CYCLE,
@@ -28,15 +25,14 @@ import {
   COLOR_MISSING_ACTIVITY_COLUMN_M_C,
   COLOR_MISSING_ACTIVITY_COLUMN_C_W,
   SOP_DATA_COLUMN_NAME,
-  PRODUCTION_OUTPUT,
-  OPERATED_HOUR,
-  BEST_PERFORMANCE,
-  QPL
+  QPL,
+  STACK_BAR_TITLE,
+  COLOR_TABLE_FILL,
 } from './constants';
 import CountBar from './CountBar';
 import { SopPie } from './SopPie';
 import { StackBarProps } from './types';
-// import Popover from 'src/components/Popover';
+import Popover from 'src/components/Popover';
 
 export default function StackBarChart(props: StackBarProps) {
   const { data, width, height, barColumn } = props;
@@ -154,17 +150,19 @@ export default function StackBarChart(props: StackBarProps) {
     let bestPerformance: any = '';
     let best: any = '';
     let worst: any = '';
+    let average: any = 0;
     let rate: any = '80%';
 
     x.forEach((name: string, index: number) => {
       totalTime += data.cycleTimeAverage[index] * data.xAxisCount[index];
       uph += data.xAxisCount[index];
+      average += parseInt(data.cycleTimeAverage[index]);
     });
     best = Math.min(...data.cycleTimeAverage);
     worst = Math.max(...data.cycleTimeAverage);
     let bottleneckIndex = data.cycleTimeAverage.indexOf(worst.toFixed(2));
     let bestPerformanceIndex = data.cycleTimeAverage.indexOf(best.toFixed(2));
-    console.log(data.cycleTimeAverage, bottleneckIndex, x);
+    console.log(data, bottleneckIndex, x);
     bottleneck = x[bottleneckIndex];
     bestPerformance = x[bestPerformanceIndex];
 
@@ -180,6 +178,7 @@ export default function StackBarChart(props: StackBarProps) {
       bottleneck: bottleneck,
       bestPerformance: bestPerformance,
       best: best,
+      average: average / data.xLength,
       worst: worst,
       rate: (rate * 100).toFixed(2) + '%',
     };
@@ -270,6 +269,9 @@ export default function StackBarChart(props: StackBarProps) {
           stackBarChartData.cycleTimeAverage[index].toString()
         );
       }),
+      textfont: {
+        color: COLOR_TABLE_FILL,
+      },
       type: 'bar',
       mode: 'markers+text',
       marker: {
@@ -287,6 +289,9 @@ export default function StackBarChart(props: StackBarProps) {
         item = parseInt(item);
         return `${COUNT_BAR_CYCLE}: ` + item.toString();
       }),
+      textfont: {
+        color: COLOR_TABLE_FILL,
+      },
       type: 'bar',
       mode: 'markers+text',
       marker: {
@@ -379,6 +384,7 @@ export default function StackBarChart(props: StackBarProps) {
     COLOR_MISSING_ACTIVITY_COLUMN_C_W,
     COLOR_MISSING_ACTIVITY_COLUMN_C_C,
   ];
+  let barColumns: any = { qpl: QPL, workstation_name: 'Workstation' };
   let steps: Array<any> = [];
   if (dataFilteredByXAxis.length > 0) {
     let sopData = JSON.parse(dataFilteredByXAxis[0][0][SOP_DATA_COLUMN]);
@@ -407,6 +413,89 @@ export default function StackBarChart(props: StackBarProps) {
     alignItems: 'center',
     display: 'flex',
   };
+  let tableData: any = {
+    qpl: [
+      [
+        'Output',
+        ['Target UPH', 'Current UPH'],
+        [
+          { text: tableRawData.uph, popup: 'UPH' },
+          {
+            text: (3600 / tableRawData.average).toFixed(2),
+            popup: '3600 / AVG CT',
+          },
+        ],
+      ],
+      [
+        'Fastest QPL',
+        ['QPL', 'Avg. CT'],
+        [
+          { text: tableRawData.bestPerformance, popup: 'QPL name' },
+          {
+            text: tableRawData.best + ' | ↓ x%',
+            popup: '(CT1+CT2+...CTn)/n | CT/ST %',
+          },
+        ],
+      ],
+      [
+        'Slowest QPL',
+        ['QPL', 'Avg. CT'],
+        [
+          { text: tableRawData.bottleneck, popup: 'QPL name' },
+          {
+            text: tableRawData.worst + ' | ↑ x%',
+            popup: '(CT1+CT2+...CTn)/n | CT/ST %',
+          },
+        ],
+      ],
+      ['QPL-1 cycle time', [], [{ text: '', popup: '' }]],
+    ],
+    workstation_name: [
+      [
+        'Output',
+        ['Target UPH', 'Current bottleneck UPH'],
+        [
+          { text: tableRawData.uph, popup: 'UPH' },
+          {
+            text: (3600 / tableRawData.worst).toFixed(2),
+            popup: '3600 / AVG CT',
+          },
+        ],
+      ],
+      [
+        'Current bottleneck UPH',
+        ['Workstation', 'Avg. CT'],
+        [
+          { text: tableRawData.bestPerformance, popup: 'Workstation name' },
+          {
+            text: tableRawData.best + ' | ↓ x%',
+            popup: '(CT1+CT2+...CTn)/n',
+          },
+        ],
+      ],
+      [
+        'Slowest QPL',
+        ['QPL', 'Avg. CT'],
+        [
+          { text: tableRawData.bottleneck, popup: 'Workstation name' },
+          {
+            text: tableRawData.worst + ' | ↑ x%',
+            popup: '(CT1+CT2+...CTn)/n',
+          },
+        ],
+      ],
+      [
+        'Balance Rate',
+        [],
+        [
+          {
+            text: tableRawData.rate,
+            popup: '(CT1+CT2+...CTn) / (n*CThighest)',
+          },
+        ],
+      ],
+    ],
+  };
 
   return (
     <div
@@ -432,55 +521,38 @@ export default function StackBarChart(props: StackBarProps) {
             height: 0.12 * height,
             display: 'flex',
             flexDirection: 'row',
-            padding: '0 50px 10px 50px',
+            padding: '0 0 10px 0',
           }}
         >
-          <div style={tableListStyle}>
-            <div style={{ ...tableLineStyle, height: '25%' }}>
-              {BALANCE_RATE}
+          {tableData[barColumn].map((item: any, index: number) => (
+            <div
+              style={{
+                ...tableListStyle,
+                flexGrow: index !== 3 ? 3 : 1,
+              }}
+            >
+              <div style={{ ...tableLineStyle, height: '25%' }}>{item[0]}</div>
+              <div style={{ ...tableLineStyle, height: '25%' }}>
+                {item[1].map((text: any) => (
+                  <div style={tableTextStyle}>{text}</div>
+                ))}
+              </div>
+              <div
+                style={{
+                  ...tableLineStyle,
+                  height: '50%',
+                  fontSize: '28px',
+                  paddingTop: 10,
+                }}
+              >
+                {item[2].map((text: any) => (
+                  <Popover content={<div>{text.popup}</div>} trigger="hover">
+                    <div style={tableTextStyle}>{text.text}</div>
+                  </Popover>
+                ))}
+              </div>
             </div>
-            <div style={{ ...tableLineStyle, height: '25%' }}></div>
-            <div style={{ ...tableLineStyle, height: '50%', fontSize: '36px' }}>
-              {tableRawData.rate}
-            </div>
-          </div>
-          <div style={tableListStyle}>
-            <div style={{ ...tableLineStyle, height: '25%' }}>
-              {PRODUCTION_OUTPUT}
-            </div>
-            <div style={{ ...tableLineStyle, height: '25%' }}>
-              <div style={tableTextStyle}>{OPERATED_HOUR}</div>
-              <div style={tableTextStyle}>{UPH}</div>
-            </div>
-            <div style={{ ...tableLineStyle, height: '50%', fontSize: '36px' }}>
-              <div style={tableTextStyle}>{tableRawData.totalTime}</div>
-              <div style={tableTextStyle}>{tableRawData.uph}</div>
-            </div>
-          </div>
-          <div style={tableListStyle}>
-            <div style={{ ...tableLineStyle, height: '25%' }}>
-              {BEST_PERFORMANCE}
-            </div>
-            <div style={{ ...tableLineStyle, height: '25%' }}>
-              <div style={tableTextStyle}>{QPL}</div>
-              <div style={tableTextStyle}>{COUNT_BAR_CT}</div>
-            </div>
-            <div style={{ ...tableLineStyle, height: '50%', fontSize: '36px' }}>
-              <div style={tableTextStyle}>{tableRawData.bestPerformance}</div>
-              <div style={tableTextStyle}>{tableRawData.best}s</div>
-            </div>
-          </div>
-          <div style={tableListStyle}>
-            <div style={{ ...tableLineStyle, height: '25%' }}>{BOTTLENECK}</div>
-            <div style={{ ...tableLineStyle, height: '25%' }}>
-              <div style={tableTextStyle}>{QPL}</div>
-              <div style={tableTextStyle}>{COUNT_BAR_CT}</div>
-            </div>
-            <div style={{ ...tableLineStyle, height: '50%', fontSize: '36px' }}>
-              <div style={tableTextStyle}>{tableRawData.bottleneck}</div>
-              <div style={tableTextStyle}>{tableRawData.worst}s</div>
-            </div>
-          </div>
+          ))}
         </div>
         {/* <Plot
           style={{ width: width, height: 0.12 * height }}
@@ -526,7 +598,7 @@ export default function StackBarChart(props: StackBarProps) {
                 l: 50,
                 r: 50,
                 b: 0,
-                t: 0,
+                t: 10,
                 pad: 4,
               },
               autosize: true,
@@ -578,10 +650,22 @@ export default function StackBarChart(props: StackBarProps) {
               hovermode: 'closest',
               showlegend: false,
               autosize: true,
+              yaxis: {
+                title: STACK_BAR_TITLE,
+                titlefont: {
+                  size: 16,
+                },
+              },
+              xaxis: {
+                title: barColumns[barColumn],
+                titlefont: {
+                  size: 16,
+                },
+              },
               margin: {
                 l: 50,
                 r: 50,
-                b: 20,
+                b: 40,
                 t: 20,
                 pad: 4,
               },
@@ -612,22 +696,43 @@ export default function StackBarChart(props: StackBarProps) {
             <div
               style={{
                 ...legendContainerStyle,
-                height: height * 0.28,
+                height: height * 0.28 - 20,
+                justifyContent: 'flex-end',
+                flexDirection: 'row',
                 padding: '20px 0 20px 0',
               }}
             >
-              {steps.map((step: number, index: number) => (
-                <div
-                  style={{
-                    ...legendStyle,
-                    flexGrow: 1,
-                    height: 0,
-                    justifyContent: 'flex-end',
-                  }}
-                >
-                  {step}
-                </div>
-              ))}
+              <div
+                style={{
+                  width: 20,
+                  fontSize: 16,
+                  transform: 'rotate(-90deg)',
+                }}
+              >
+                Activity
+              </div>
+              <div
+                style={{
+                  ...legendContainerStyle,
+                  width: 'auto',
+                  height: '100%',
+                  marginLeft: 10,
+                  alignItems: 'flex-end',
+                }}
+              >
+                {steps.map((step: number, index: number) => (
+                  <div
+                    style={{
+                      ...legendStyle,
+                      width: 'auto',
+                      flexGrow: 1,
+                      height: 0,
+                    }}
+                  >
+                    {step}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
           <div
@@ -663,13 +768,13 @@ export default function StackBarChart(props: StackBarProps) {
                 />
                 <CountBar
                   width={'100%'}
-                  height={height * 0.28}
+                  height={height * 0.28 - 20}
                   data={item}
                   isShowticklabels={true}
                   margin={{
                     l: 40,
                     r: 20,
-                    b: 20,
+                    b: 40,
                     t: 20,
                     pad: 4,
                   }}
@@ -677,6 +782,18 @@ export default function StackBarChart(props: StackBarProps) {
               </div>
             ))}
           </div>
+        </div>
+        <div
+          style={{
+            width: currentMinWidth,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: 20,
+            paddingLeft: 300,
+          }}
+        >
+          Process Time (s)
         </div>
       </div>
     </div>

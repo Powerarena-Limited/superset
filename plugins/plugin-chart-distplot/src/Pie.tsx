@@ -111,6 +111,7 @@ export function Pie(props: PieProps) {
       },
       title: { text: PIE_CHART_ON_THE_TOP_TITLE },
       type: 'pie',
+      hoverinfo: 'value',
       // domain: {
       //   row: 0,
       //   column: 0,
@@ -124,6 +125,7 @@ export function Pie(props: PieProps) {
       name: SOP_WAITING_STEP_WAITING,
       values: currentWaitingPieData,
       labels: initSopWaitingLables,
+      hoverinfo: 'value',
       marker: {
         colors: [
           COLOR_SOP_WAITING_STEP_WAITING,

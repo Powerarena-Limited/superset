@@ -406,6 +406,19 @@ export default function Distplot(props: DistplotProps) {
                   t: 50,
                   pad: 4,
                 },
+                yaxis: {
+                  title: {
+                    text: 'No. of Cycle',
+                    font: { size: 16 },
+                  },
+                },
+                xaxis: {
+                  title: {
+                    text: 'Cycle Time (s)',
+                    font: { size: 16 },
+                    standoff: 10,
+                  },
+                },
                 autosize: true,
                 title: DISTRIBUTION_CHART_ON_THE_TOP_TITLE,
               }}

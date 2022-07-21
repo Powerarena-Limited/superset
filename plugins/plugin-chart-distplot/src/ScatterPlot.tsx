@@ -25,6 +25,7 @@ import {
   COLOR_DISTRUBUTION_BAR_HOVER,
   SCATTERPLOT_TITLE,
   COLOR_SOP_WAITING_STEP_PROCESS_HOVER,
+  STACK_BAR_TITLE,
 } from './constants';
 import {
   EVENT_TS_COLUMN,
@@ -393,12 +394,19 @@ export default function ScatterPlot(props: ScatterPlotProps) {
           margin: {
             l: 50,
             r: 20,
-            b: 20,
+            b: 40,
             t: 50,
             pad: 4,
           },
+          xaxis: {
+            title: STACK_BAR_TITLE,
+            titlefont: {
+              size: 16,
+            },
+          },
           yaxis: {
             automargin: true,
+            title: { text: 'Activity', standoff: 10, font: { size: 16 } },
           },
           autosize: true,
           title: SCATTERPLOT_TITLE,

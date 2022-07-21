@@ -98,6 +98,7 @@ export function SopPie(props: SopPieProps) {
               row: 0,
               column: 0,
             },
+            hoverinfo: 'value',
             textinfo: 'percent',
             textposition: 'inside',
           },

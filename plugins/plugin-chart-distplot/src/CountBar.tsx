@@ -13,7 +13,8 @@ import {
   COLOR_SOP_WAITING_STEP_WAITING,
   COLOR_SOP_WAITING_STEP_WAITING_HOVER,
   COLOR_NVA_HOVER,
-  COLOR_NVA
+  COLOR_NVA,
+  STACK_BAR_TITLE
 } from './constants';
 import { CountBarProps } from './types';
 
@@ -104,9 +105,20 @@ export default function CountBar(props: CountBarProps) {
     layout['margin'] = {
       l: 50,
       r: 20,
-      b: 33,
+      b: 53,
       t: 58 + (height - 70) / (steps.length + 1),
       pad: 4,
+    };
+    layout['yaxis']['title'] = {
+      text: 'Activity',
+      standoff: 10,
+      font: { size: 16 },
+    };
+    layout['xaxis'] = {
+      title: STACK_BAR_TITLE,
+      titlefont: {
+        size: 16,
+      },
     };
   }
 
