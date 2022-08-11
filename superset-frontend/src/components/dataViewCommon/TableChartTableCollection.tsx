@@ -367,7 +367,6 @@ let showRowData = (row: object) => {
     port = chartName?.split('--')[1] || '10443';
   }
   console.log('@368', row['original']);
-  // add 10 * 1000,Ensure that the playback page data is displayed normally
   let entityCode = row['original']['P_DEVICE_ID'];
   let pos = row['original']['P_POS'];
   let endTime = Date.parse(row['original']['P_EVENT_TS']);
@@ -381,7 +380,8 @@ let showRowData = (row: object) => {
       startTime = endTime - parseInt(row['original']['value']) * 1000;
     }
   }
-  endTime += 10 * 1000;
+  endTime += 1000;
+  startTime -= 1000;
   let url =
     'https://manage-' +
     clientName +
