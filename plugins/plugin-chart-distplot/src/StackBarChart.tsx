@@ -793,7 +793,7 @@ export default function StackBarChart(props: StackBarProps) {
             paddingLeft: 300,
           }}
         >
-          Process Time (s)
+          Time (s)
         </div>
       </div>
     </div>
