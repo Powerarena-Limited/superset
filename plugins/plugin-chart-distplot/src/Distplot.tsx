@@ -45,6 +45,7 @@ import {
   TARGET_CYCLE_TIME_COLUMN_VALUE,
   DISTRIBUTION_CHART_ON_THE_TOP_TITLE,
   DISTRIBUTION_CHART_ON_THE_BOTTOM_RIGHT,
+  COLOR_DISABLE_VIEW_VIDEO,
 } from './constants';
 import { Pie } from './Pie';
 import ScatterPlot from './ScatterPlot';
@@ -87,6 +88,7 @@ export default function Distplot(props: DistplotProps) {
   const [distData, setDistData] = useState<Array<any>>([{}]);
   const [selected, setSelected] = useState<Array<any>>([]);
   const [selectedPie, setSelectedPie] = useState<Array<string>>([]);
+  const [playbackData, setPlaybackData] = useState<any>({});
 
   let targetCycleTime = data[0][TARGET_CYCLE_TIME_COLUMN];
   let cycleTimeList: Array<number> = [];
@@ -147,6 +149,7 @@ export default function Distplot(props: DistplotProps) {
 
   let parseActivities = (activities: any): any => JSON.parse(activities);
   let handleOnClickPie = (event: any) => {
+    setPlaybackData({});
     let label = event.points[0].label,
       selectedPieData: Array<any> = selectedPie;
     if (selectedPieData.indexOf(label) === -1) {
@@ -176,6 +179,16 @@ export default function Distplot(props: DistplotProps) {
     } else {
       setScatterData(pieData);
     }
+  };
+  let updatePlaybackDate = (
+    eventTs: any,
+    deviceId: any,
+    pos: any,
+    cycleTime: any,
+  ) => {
+    if (eventTs !== undefined)
+      setPlaybackData({ eventTs, deviceId, pos, cycleTime });
+    else setPlaybackData({});
   };
   let distChartData: Array<any> = [
     {
@@ -208,6 +221,7 @@ export default function Distplot(props: DistplotProps) {
   ];
   let handleOnClick = (event: any) => {
     setSelectedPie([]);
+    setPlaybackData({});
     let selectedData = selected;
     if (
       selectedData.filter((item: any) => item.id === event.points[0].binNumber)
@@ -302,6 +316,16 @@ export default function Distplot(props: DistplotProps) {
     height: (height - 75) * 0.5,
   };
 
+  let viewVideoButton: any = {
+    width: '100%',
+    height: '40px',
+    background: COLOR_VIEW_VIDEO_BUTTON,
+    borderRadius: '8px',
+    border: 0,
+    color: COLOR_TABLE_FILL,
+    marginTop: '10px',
+  };
+
   // let tableData: any = [
   //   {
   //     type: 'table',
@@ -383,6 +407,7 @@ export default function Distplot(props: DistplotProps) {
           }}
           onClick={() => {
             setSelectedPie([]);
+            setPlaybackData({});
             setSelected([]);
             setScatterData([...scatterRawData]);
             setCurrentMissingPieData([...currentMissingPieData]);
@@ -450,6 +475,7 @@ export default function Distplot(props: DistplotProps) {
             width={width * 0.62}
             height={(height - 75) * 0.5}
             data={scatterData}
+            updatePlaybackDate={updatePlaybackDate}
           />
           <div>
             <CountBar
@@ -462,16 +488,17 @@ export default function Distplot(props: DistplotProps) {
         </div>
       </div>
       <button
-        style={{
-          width: '100%',
-          height: '40px',
-          background: COLOR_VIEW_VIDEO_BUTTON,
-          borderRadius: '8px',
-          border: 0,
-          color: COLOR_TABLE_FILL,
-          marginTop: '10px',
-        }}
-        onClick={() => videoPlaybak('View Video')}
+        style={
+          JSON.stringify(playbackData) !== '{}'
+            ? { ...viewVideoButton }
+            : {
+                ...viewVideoButton,
+                background: COLOR_DISABLE_VIEW_VIDEO,
+                cursor: 'no-drop',
+              }
+        }
+        onClick={() => videoPlaybak(playbackData)}
+        disabled={JSON.stringify(playbackData) !== '{}' ? false : true}
       >
         View Video
       </button>
@@ -480,8 +507,31 @@ export default function Distplot(props: DistplotProps) {
 }
 
 let videoPlaybak = (data: any) => {
-  console.log('@video playbak', data);
+  let clientName = '';
+  let port = '10443';
+  try {
+    clientName =
+      window.location.href.split('superset-')[1].split('.standalone')[0] || '';
+    port =
+      window.location.href.split('powerarena.com:')[1].split('/')[0] || '10443';
+  } catch {}
+  let endTime = data['eventTs'];
+  let startTime = endTime - parseInt(data['cycleTime']) * 1000;
+  endTime += 1000;
+  startTime -= 1000;
+  console.log('@video playbak', data, clientName, port);
   let url =
-    'https://manage-sales-demo.standalone.powerarena.com:10443/admin/mark-for-reason/?tab=single-view&entity_code=demo_demo_line_cam_007&pos=267&start_ts=1651623239000&end_ts=1651623389000&alert_type=1';
+    'https://manage-' +
+    clientName +
+    '.standalone.powerarena.com:' +
+    port +
+    '/app/mes/workstation/playback/?entity_code=' +
+    data.deviceId +
+    '&pos=' +
+    data.pos +
+    '&start_ts=' +
+    startTime +
+    '&end_ts=' +
+    endTime;
   window.open(url, '_blank')?.focus();
 };

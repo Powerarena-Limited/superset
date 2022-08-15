@@ -66,7 +66,7 @@ import {
 export default function ScatterPlot(props: ScatterPlotProps) {
   // height and width are the height and width of the DOM element as it exists in the dashboard.
   // There is also a `data` prop, which is, of course, your DATA 🎉
-  const { data, height, width } = props;
+  const { data, height, width, updatePlaybackDate } = props;
   // const [oneCycleData, setOneCycleData] = useState<any | any>({});
   // const [sopWithTargetData, setSopWithTargetData] = useState<Array<any>>([]);
   // const [showCurrentCycle, setShowCurrentCycle] = useState(false);
@@ -302,6 +302,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
       event,
       scatterPlotChartData[event.points[0].curveNumber],
     );
+    let record: any = scatterPlotChartData[event.points[0].curveNumber].record;
     let colors: any[] = [];
     for (const color of scatterPlotChartData[event.points[0].curveNumber].marker
       .color) {
@@ -323,6 +324,16 @@ export default function ScatterPlot(props: ScatterPlotProps) {
       },
     });
     setScatterPlotData(scatterPlotChartData);
+    if (updatePlaybackDate) {
+      updatePlaybackDate(
+        typeof record.event_ts !== 'number'
+          ? Date.parse(record.event_ts)
+          : record.event_ts,
+        record.device_id,
+        record.pos,
+        record.cycle_time,
+      );
+    }
     // if (CYCLE_TIME_COLUMN === event.points[0].y.toString()) {
     //   // setShowCurrentCycle(true);
     //   let data = event.points[0].data;

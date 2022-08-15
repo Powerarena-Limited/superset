@@ -83,6 +83,7 @@ export const COLOR_LT_TARGET = 'DarkSeaGreen';
 export const COLOR_COUNT = '147DD6';
 export const COLOR_TABLE_LINE = 'black';
 export const COLOR_TABLE_FILL = 'white';
+export const COLOR_DISABLE_VIEW_VIDEO = '#e0e0e0';
 export const COLOR_VIEW_VIDEO_BUTTON = '#55CBCD';
 export const COLOR_COUNT_BAR_CT = '#C4C4C4';
 export const COLOR_COUNT_BAR_CYCLE = '#959595';
