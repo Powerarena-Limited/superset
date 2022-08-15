@@ -167,7 +167,7 @@ export function Pie(props: PieProps) {
           missingActivityColors[item] = hoverActivityColors[item];
         }
         setMissingColors(missingActivityColors);
-        handleOnClick(event);
+        if (handleOnClick) handleOnClick(event);
       }}
       onHover={(event: any) => handleOnHover(event)}
       onUnhover={(event: any) => handleOnUnHover(event)}

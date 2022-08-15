@@ -466,7 +466,6 @@ export default function Distplot(props: DistplotProps) {
               height={(height - 75) * 0.5 * 0.45}
               currentWaitingPieData={currentWaitingPieData}
               // pieTitle={pieTitle}
-              handleOnClick={(event: any) => handleOnClickPie(event)}
             />
           </div>
         </div>
