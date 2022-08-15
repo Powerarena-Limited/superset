@@ -302,6 +302,7 @@ export default function ScatterPlot(props: ScatterPlotProps) {
       event,
       scatterPlotChartData[event.points[0].curveNumber],
     );
+    if (scatterPlotChartData[event.points[0].curveNumber].name !== '') return;
     let record: any = scatterPlotChartData[event.points[0].curveNumber].record;
     let colors: any[] = [];
     for (const color of scatterPlotChartData[event.points[0].curveNumber].marker
