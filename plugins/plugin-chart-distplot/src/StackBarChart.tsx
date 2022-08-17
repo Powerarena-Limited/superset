@@ -158,11 +158,11 @@ export default function StackBarChart(props: StackBarProps) {
       uph += data.xAxisCount[index];
       average += parseInt(data.cycleTimeAverage[index]);
     });
-    best = Math.min(...data.cycleTimeAverage);
-    worst = Math.max(...data.cycleTimeAverage);
-    let bottleneckIndex = data.cycleTimeAverage.indexOf(worst.toFixed(2));
-    let bestPerformanceIndex = data.cycleTimeAverage.indexOf(best.toFixed(2));
-    console.log(data, bottleneckIndex, x);
+    best = Math.min(...data.processAverage);
+    worst = Math.max(...data.processAverage);
+    let bottleneckIndex = data.processAverage.indexOf(worst.toFixed(2));
+    let bestPerformanceIndex = data.processAverage.indexOf(best.toFixed(2));
+    // console.log(data, bottleneckIndex, x);
     bottleneck = x[bottleneckIndex];
     bestPerformance = x[bestPerformanceIndex];
 
@@ -793,7 +793,7 @@ export default function StackBarChart(props: StackBarProps) {
             paddingLeft: 300,
           }}
         >
-          Time (s)
+          Count
         </div>
       </div>
     </div>

@@ -91,5 +91,5 @@ export const DIST_X_END = 80;
 export const DIST_X_SIZE = 5;
 export const DIST_X_START = 0;
 export const WAITING_TIME = 'waiting';
-export const WAITING_TIME_WORKING = 'process';
+export const WAITING_TIME_WORKING = 'cycle';
 export const STACKBARCHART_TITLE = 'Working/Non-Working Ratio';

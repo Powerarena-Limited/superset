@@ -14,7 +14,6 @@ import {
   COLOR_SOP_WAITING_STEP_WAITING_HOVER,
   COLOR_NVA_HOVER,
   COLOR_NVA,
-  STACK_BAR_TITLE
 } from './constants';
 import { CountBarProps } from './types';
 
@@ -115,7 +114,7 @@ export default function CountBar(props: CountBarProps) {
       font: { size: 16 },
     };
     layout['xaxis'] = {
-      title: STACK_BAR_TITLE,
+      title: 'Count',
       titlefont: {
         size: 16,
       },
