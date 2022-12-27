@@ -7,11 +7,15 @@ logger = logging.getLogger()
 
 SECRET_KEY = "\2\1thisismyscretkey\1\2\\e\\y\\y\\h"
 # Flask-WTF flag for CSRF
-WTF_CSRF_ENABLED = True
+WTF_CSRF_ENABLED = False
 # Add endpoints that need to be exempt from CSRF protection
 WTF_CSRF_EXEMPT_LIST = []
 # A CSRF token that expires in 1 year
 WTF_CSRF_TIME_LIMIT = 60 * 60 * 24 * 365
+
+AUTH_ROLE_PUBLIC = 'Public'
+
+PUBLIC_ROLE_LIKE = "Gamma"
 
 def get_env_variable(var_name, default=None):
     """Get the environment variable or raise exception."""
