@@ -524,7 +524,7 @@ let videoPlaybak = (data: any) => {
     clientName +
     '.standalone.powerarena.com:' +
     port +
-    '/app/mes/workstation/playback/?entity_code=' +
+    '/app/mes/respository/playback/?entity_code=' +
     data.deviceId +
     '&pos=' +
     data.pos +
