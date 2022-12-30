@@ -30,6 +30,7 @@ from celery.schedules import crontab
 
 logger = logging.getLogger()
 
+SECRET_KEY = "\2\1thisismyscretkey\1\2\\e\\y\\y\\h"
 
 def get_env_variable(var_name: str, default: Optional[str] = None) -> str:
     """Get the environment variable or raise exception."""
