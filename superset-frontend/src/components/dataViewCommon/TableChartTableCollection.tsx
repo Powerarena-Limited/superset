@@ -387,7 +387,7 @@ let showRowData = (row: object) => {
     clientName +
     '.standalone.powerarena.com:' +
     port +
-    '/app/mes/respository/playback/?entity_code=' +
+    '/app/mes/repository/playback/?entity_code=' +
     entityCode +
     '&pos=' +
     pos +
